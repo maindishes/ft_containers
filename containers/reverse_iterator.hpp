@@ -115,5 +115,70 @@ class reverse_iterator: public ft::iterator<typename ft::iterator_traits<Iterato
 
 // Non-member function overloads
 // relational operators
+template <class Iterator1, class Iterator2>
+bool operator==(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
+{
+    return (lhs.base() == rhs.base());
+}
+
+template <class Iterator1, class Iterator2>
+bool operator!=(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
+{
+    return !(rhs == lhs);
+}
+
+template <class Iterator1, class Iterator2>
+bool operator<(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
+{
+    return (rhs.base() < lhs.base());
+}
+
+template <class Iterator1, class Iterator2>
+bool operator<=(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
+{
+    return !(rhs < lhs);
+}
+
+template <class Iterator1, class Iterator2>
+bool operator>(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
+{
+    return (rhs < lhs);
+}
+
+template <class Iterator1, class Iterator2>
+bool operator>=(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
+{
+    return !(lhs < rhs);
+}
+
+/**
+ * @brief Addition operator
+ * Returns a reverse iterator pointing to the element located n positions away from the element pointed to by rev_it.
+ * @tparam Iterator
+ * @param n Number of elements to offset.
+ * @param rev_it Reverse iterator.
+ * @return An iterator pointing to the element n positions away from rev_it.
+ */
+template <typename Iterator>
+reverse_iterator<Iterator> operator+(
+	typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator> &rev_it)
+{ 
+    return reverse_iterator<Iterator>(rev_it.base() - n); 
+}
+
+/**
+ * @brief Subtraction operator
+ * Returns the distance between lhs and rhs.
+ * @tparam Iterator 
+ * @param lhs 
+ * @param rhs 
+ * @return The number of elements between lhs and rhs.
+ */
+template <typename Iterator1, typename Iterator2>
+typename reverse_iterator<Iterator1>::difference_type operator-(const reverse_iterator<Iterator1> &lhs, const reverse_iterator<Iterator2> &rhs)
+{ 
+    return rhs.base() - lhs.base(); 
+}
+
 }
 #endif
