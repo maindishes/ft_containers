@@ -94,6 +94,33 @@ void bubble_sort(Cont& cont)
     }
 }
 
+template <typename Cont, typename Comp>
+void bubble_sort(Cont& cont, Comp& comp)
+{
+    for (int i = 0; i < cont.size(); i++)
+    {
+        for (int j = i+1; j < cont.size(); j++)
+        {
+            if(!comp(cont[i], cont[j]))
+                cont.swap(i,j);
+        }
+    }
+}
+
+struct Comp1
+{
+    bool operator()(int a, int b)
+    {
+        return a > b;
+    }
+};
+struct Comp2
+{
+    bool operator()(int a, int b)
+    {
+        return a < b;
+    }
+};
 
 int main()
 {
@@ -108,8 +135,15 @@ int main()
     std::cout << "정렬 이전 ---- " << std::endl;
     int_vec.print();
 
-    std::cout << " 정렬 이후 ---- " << std::endl;
-    bubble_sort(int_vec);
+    Comp1 comp1;
+    bubble_sort(int_vec, comp1);
+    
+    std::cout << " 내림차순 정렬 이후 ---- " << std::endl;
+    int_vec.print();
+
+    Comp2 comp2;
+    std::cout << " 오름차순 정렬 이후 ---- " << std::endl;
+    bubble_sort(int_vec, comp2);
     int_vec.print();
 
 }
