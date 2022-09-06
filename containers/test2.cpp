@@ -1,16 +1,29 @@
 #include <iostream>
+#include <cstddef>
 
-int negate(unsigned int i) { return -i; }
+template <bool, typename T = void>
+struct enable_if {};
 
-// template <typename T>
-// typename T::value_type negate(const T& t) {
-//   return -T(t);
-// }
 template <typename T>
-void negate(const T& t) {
-  typename T::value_type n = -t();
+struct enable_if<true, T>
+{
+  typedef T type;
+};
+
+template <class T, typename std::enable_if<std::is_integral<T>::value, T>::type* = nullptr>
+void do_stuff(T& t)
+{
+  std::cout << "do_stuff integral\n";
 }
+
+template <class T, typename std::enable_if<std::is_class<T>::value, T>::type* = nullptr>
+void do_stuff(T& t)
+{ 
+  // 일반적인 클래스 들을 받음
+}
+
 int main()
 {
-  std::cout << negate(42) << std::endl;
+
+  do_stuff(2,);
 }
