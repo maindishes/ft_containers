@@ -24,6 +24,6 @@ void do_stuff(T& t)
 
 int main()
 {
-
-  do_stuff(2,);
+ 
+  do_stuff(2);
 }
