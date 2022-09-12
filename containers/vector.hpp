@@ -53,21 +53,47 @@ namespace ft
 
         //Member functions
         public:
-            //default (1)	
+            //empty container constructor (default constructor)
             explicit vector (const allocator_type& alloc = allocator_type())
             : _alloc(alloc), _start(0), _end(0), _capacity(0)
             {}
-            //fill (2)	
+            //fill constructor	
             explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
-            : _alloc(alloc), _capacity(n), _
+            : _alloc(alloc), _capacity(n)
             {
-
+                this->_start = _alloc.allocate(n);
+                this->_end = this->_start;
+                this->_capacity = this->_start + n;
+                for (size_type i = 0; i < n; ++i)
+                {
+                    _alloc.construct(this->_end++, val);                
+                }
             }
-            //range (3)	
+            //range constructor
             template <class InputIterator>
             vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type());
-            //copy (4)	
-            vector (const vector& x);
+            
+            // copy constructor 
+            vector (const vector& x)
+            : _alloc(x._alloc), _capacity(x._capacity)
+            {
+                size_type n = x.size();
+                this->_start = this->_alloc.allocate(n);
+                this->_end = _start;
+                this->_capacity = _start + n;
+                for (size_type i =0; i < n; ++i)
+                {
+                    _alloc.construct(_end + i, x[i])
+                }
+            }
+
+            //destructor
+            virtual ~vector()
+            {
+                while (this->_start != this->_end)
+                    this->_alloc.destroy(--this->_end);
+                this->alloc.deallocate(this->_start, this->_capacity - this->_start);
+            }
 
 
     }  
