@@ -165,7 +165,8 @@ namespace ft
                 // max_size
             size_type max_size() const
             {
-                return (this->_alloc.max_size());
+                // maybe gcc 자료구조 ptrdiff 의 오버플로우 생각해야한다. (alloc.max_size()가 정해진 자료구조보다 커버리면 오버플로우!)
+                return (this->_alloc.max_size() > PTRDIFF_MAX ? PTRDIFF_MAX : this->_alloc.max_size());
             }
                 // resize
             void resize (size_type n, value_type val = value_type());
@@ -179,6 +180,17 @@ namespace ft
                 // return (size_type(this->_end_capacity - this->_start));
                 return (_capacity);
             }
+                // empty
+            bool empty() const
+            {
+                return (_size == 0);
+            }
+                // reverse
+            void reserve (size_type n)
+            {
+                
+            }
+
     }   
 }
 
