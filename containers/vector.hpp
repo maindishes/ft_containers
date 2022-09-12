@@ -85,35 +85,101 @@ namespace ft
                 this->_start = this->_alloc.allocate(n);
                 this->_end = _start;
                 this->_end_capacity = _start + n;
-                for (size_type i =0; i < n; ++i)
+                for (size_type i = 0; i < _size; ++i)
                 {
-                    _alloc.construct(_end + i, x[i])
+                    _alloc.construct(_end++, x[i])
                 }
             }
 
             //destructor
             virtual ~vector()
             {
-                while (this->_start != this->_end)
+                for (this->_start != this->_end)
                     this->_alloc.destroy(--this->_end);
                 this->alloc.deallocate(this->_start, this->size_type(this->_end_capacity - this->_start));
             }
-
-            // size_type capacity() const
-            // {
-            //     return size_type(_end_capacity - _start);
-            // }
 
             // operator=
             vector& operator=(const vector& x)
             {
                 if (this == &x)
                     return (*this);
-                
+                for (this->_start != this->_end)
+                    this->_alloc.destroy(--this->_end);
+                this->alloc.deallocate(this->_start, _capacity);
+                _capacity = x._capacity;
+                _start = _alloc.allocate(_capacity);
+                for (_size = 0; _size < x._size; ++_size)
+                    _alloc.construct(_start + _size, x[_size]);
+                return (*this);
             }
 
 
-    }  
+            // iterators
+                // begin
+            iterator begin()
+            {
+                return (iterator(this->_start));
+            }
+            const_iterator begin() const
+            {
+                return (const_iterator(this->_start));
+            }
+                // end
+            iterator end()
+            {
+                return (iterator(_start + _size)); // _end
+            }
+            const_iterator end() const
+            {
+                return (const_iterator(_start + _size)) // _end
+            }
+            // reverse_iterator
+                // rbegin
+            reverse_iterator rbegin()
+            {
+                return (reverse_iterator(end()));
+            }
+            const_reverse_iterator rbegin() const
+            {
+                return (const_reverse_iterator(end()));
+            }
+                // end
+            reverse_iterator rend()
+            {
+                return (reverse_iterator(begin()));
+            }
+            const_reverse_iterator rend() const
+            {
+                return (const_reverse_iterator(begin()));
+            }
+
+            // Capacity
+                // size
+            size_type size() const
+            {
+                // return size_type(this->end() - this->begin());
+                return (_size);
+            }
+
+                // max_size
+            size_type max_size() const
+            {
+                return (this->_alloc.max_size());
+            }
+                // resize
+            void resize (size_type n, value_type val = value_type());
+            {
+                //erase, insert 
+                ;
+            }
+                // capacity
+            size_type capacity() const
+            {
+                // return (size_type(this->_end_capacity - this->_start));
+                return (_capacity);
+            }
+    }   
 }
 
 
