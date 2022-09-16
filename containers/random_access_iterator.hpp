@@ -1,9 +1,11 @@
 #ifndef RANDOM_ACCESS_ITERATOR_HPP
 #define RANDOM_ACCESS_ITERATOR_HPP
+
 # include "iterator_base.hpp"
+
 namespace ft
 {
-template <class Iterator, typename Container> 
+template <typename Iterator, typename Container> 
 class random_access_iterator: public ft::iterator<typename ft::iterator_traits<Iterator>::iterator_category,
                                                   typename ft::iterator_traits<Iterator>::value_type,
                                                   typename ft::iterator_traits<Iterator>::difference_type,
@@ -14,11 +16,11 @@ class random_access_iterator: public ft::iterator<typename ft::iterator_traits<I
     public:
         // //Member_types
         typedef Iterator iterator_type;
-        typedef typename iterator_traits<Iterator>::iterator_category   iterator_category;
-        typedef typename iterator_traits<Iterator>::value_type          value_type;
-        typedef typename iterator_traits<Iterator>::difference_type     difference_type;
-        typedef typename iterator_traits<Iterator>::pointer             pointer;
-        typedef typename iterator_traits<Iterator>::reference           reference;
+        // typedef typename iterator_traits<Iterator>::iterator_category   iterator_category;
+        // typedef typename iterator_traits<Iterator>::value_type          value_type;
+        typedef typename ft::iterator_traits<Iterator>::difference_type     difference_type;
+        typedef typename ft::iterator_traits<Iterator>::pointer             pointer;
+        typedef typename ft::iterator_traits<Iterator>::reference           reference;
     
     protected:
         iterator_type current_state; // A copy of the original iterator
@@ -27,15 +29,15 @@ class random_access_iterator: public ft::iterator<typename ft::iterator_traits<I
     // 생성자
         random_access_iterator() {} // default (1)
         
-        explicit random_access_iterator(iterator_type it); 
-        : current_state(it) {} // initializtion (2)
+        explicit random_access_iterator(iterator_type it) 
+        :current_state(it) {} // initializtion (2)
         
         // random_access_iterator(const random_access_iterator& __x)
         // : _M_current(__x._M_current) {}
 
         template<class Iter>       // copy (3)
-        random_access_iterator(const random_access_iterator<Iter>& it)
-        : current_state(it.base()) {}
+        random_access_iterator(const random_access_iterator<Iter, Container>& it)
+        :current_state(it.base()) {}
     // 소멸자
         virtual ~random_access_iterator() {}
         
@@ -169,7 +171,7 @@ template <typename Iterator, typename Container>
 random_access_iterator<Iterator, Container> operator+(
 	typename random_access_iterator<Iterator, Container>::difference_type n, const random_access_iterator<Iterator, Container> &it)
 { 
-    return random_access_iterator<Iterator>(it.base() + n); 
+    return random_access_iterator<Iterator, Container>(it.base() + n); 
 }
 
 /**

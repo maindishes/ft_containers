@@ -1,8 +1,8 @@
 #ifndef REVERSE_ITERATOR_HPP
 #define REVERSE_ITERATOR_HPP
 # include "iterator_base.hpp"
-# include <vector>
-std::vector<int> i;
+// # include <vector>
+// std::vector<int> i;
 namespace ft
 {
 template <class Iterator> 
@@ -17,11 +17,11 @@ class reverse_iterator: public ft::iterator<typename ft::iterator_traits<Iterato
         //Member_types
         typedef Iterator iterator_type;
            
-        typedef typename iterator_traits<Iterator>::iterator_category   iterator_category;
-        typedef typename iterator_traits<Iterator>::value_type          value_type;
-        typedef typename iterator_traits<Iterator>::difference_type     difference_type;
-        typedef typename iterator_traits<Iterator>::pointer             pointer;
-        typedef typename iterator_traits<Iterator>::reference           reference;
+        typedef typename ft::iterator_traits<Iterator>::iterator_category   iterator_category;
+        typedef typename ft::iterator_traits<Iterator>::value_type          value_type;
+        typedef typename ft::iterator_traits<Iterator>::difference_type     difference_type;
+        typedef typename ft::iterator_traits<Iterator>::pointer             pointer;
+        typedef typename ft::iterator_traits<Iterator>::reference           reference;
     
     protected:
         iterator_type current_state; // A copy of the original iterator
@@ -30,15 +30,17 @@ class reverse_iterator: public ft::iterator<typename ft::iterator_traits<Iterato
     // 생성자
         reverse_iterator() {} // default (1)
         
-        explicit reverse_iterator(iterator_type it); 
-        : current_state(it) {} // initializtion (2)
+        explicit reverse_iterator(iterator_type it) 
+        :current_state(it) 
+        {
+        } // initializtion (2)
         
         // reverse_iterator(const reverse_iterator& __x)
         // : _M_current(__x._M_current) {}
 
         template<class Iter>       // copy (3)
         reverse_iterator(const reverse_iterator<Iter>& rev_it)
-        : current_state(rev_it.base()) {}
+        :current_state(rev_it.base()) {}
     // 소멸자
         virtual ~reverse_iterator() {}
         
