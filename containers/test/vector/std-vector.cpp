@@ -146,6 +146,20 @@ int main()
 		std::cout << "capacity: " << ftv.capacity() << std::endl;
 	}
 
+	std::cout << std::endl
+			  << "#===== assign =====#" << std::endl;
+	v3.resize(30);
+	v4.assign(v3.begin(), v3.end());
+	for (rit = v4.rbegin(); rit != v4.rend(); rit++)
+		std::cout << *rit << " ";
+	std::cout << std::endl;
+
+	std::cout << "ft" << std::endl;
+	ftv3.resize(30);
+	ftv4.assign(ftv3.begin(), ftv3.end());
+	for (ftrit = ftv4.rbegin(); ftrit != ftv4.rend(); ftrit++)
+		std::cout << *ftrit << " ";
+	std::cout << std::endl;
 	// std::cout << std::endl
 	// 		  << "#===== push_back =====#" << std::endl;
 	// v.resize(0);
