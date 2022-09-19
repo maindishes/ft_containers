@@ -4,6 +4,7 @@
 #include "random_access_iterator.hpp"
 #include "reverse_iterator.hpp"
 #include "type_trait.hpp"
+#include "algorithm.hpp"
 // #include "iterator_base.hpp"
 
 #include <cstddef>   // std::ptrdiff_t
@@ -199,7 +200,7 @@ namespace ft
                 //     throw std::out_of_range("ft::vector");
                 if (n < this->_size)
                 {
-                    for(size_type i =_size - n; i < _size; i++)
+                    for(size_type i = n; i < _size; i++)
                         _alloc.destroy(this->_start + i);
                 }
                 else if (n >= this->_size)
@@ -209,6 +210,7 @@ namespace ft
                         _alloc.construct(_start + i, val);
                 }
                 _size = n;
+                _end = _start + n;
             }
                 // capacity
             size_type capacity() const
@@ -232,6 +234,8 @@ namespace ft
                 if (n > this->capacity())
                 {
                     pointer tmp = _start;
+                    if (n < _capacity * 2)
+                        n = _capacity * 2;
                     _start = _alloc.allocate(n);
                     for (size_type i = 0; i < _size; i++)
                     {
@@ -285,6 +289,200 @@ namespace ft
             {
                 return (*(end() - 1)); 
             }
+            // Modifier
+                //assign
+                    //range (1)	
+            template <class InputIterator>
+            void assign (typename ft::enable_if<!ft::is_integral<InputIterator>::value , InputIterator>::type first, InputIterator last)
+            {
+                size_type n = 0;
+                for (InputIterator it = first; it != last; ++it)
+                    ++n;
+                // std::cout << n << std::endl;
+                // this->reserve(n);
+                while (this->_start != this->_end)
+                    _alloc.destroy(--this->_end);
+                if (this->capacity() < n)
+                {
+                    _alloc.deallocate(_start, capacity());
+                    _start = _alloc.allocate(n);
+                    _end = _start;
+                    _end_capacity = _start + n;
+                }
+    
+                for(size_type k = n; k != 0; k--)
+                {
+                    _alloc.construct(this->_end++,*first++);
+                    // std::cout << "n : " << n << std::endl;
+                }
+                _size = n;
+
+                // this->reserve(n);
+                // for (size_type i = 0; i < n; ++i)
+                // {
+                //     if (i < _size)
+                //     {
+                //         _alloc.destroy(_start + i);
+                //     }
+                //     _alloc.construct(_start + i, *first++);
+                // }
+                // _size = n;
+                // _end = _start + n;
+		    }
+                    //fill (2)	
+            void assign (size_type n, const value_type& val)
+            {
+                //clear
+                // this->reserve(n);
+                while (this->_start != this->_end)
+                    _alloc.destroy(--this->_end);
+                if (this->_capacity < n)
+                {
+                    _alloc.deallocate(_start, _capacity);
+                    _start = _alloc.allocate(n);
+                    _end = _start;
+                    _end_capacity = _start + n;
+                }
+                for(size_type k = n; k != 0; k--)
+                {
+                    _alloc.construct(this->_end++, val);
+                    // std::cout << "n : " << n << std::endl;
+                }
+                _size = n;
+            }
+            
+                // push_back
+            void push_back (const value_type& val)
+            {
+                // 꽉 찼으면 resize(a+1);
+                // 아니면 construct 로 데이터 넣기
+                if (_size == _capacity)
+                    resize(_size + 1, val);
+                else
+                {
+                    _alloc.construct(_start + _size, val);
+                    _size++;
+                }
+            }
+
+                // pop_back
+            void pop_back()
+            { 
+                _alloc.destroy(--_end);
+                _size--;
+            }
+                // insert
+                    //single element (1)	
+            iterator insert (iterator position, const value_type& val)
+            {
+                size_type pos = position - this->begin();
+                this->insert(position,1,val);
+            }
+                    //fill (2)	
+            void insert (iterator position, size_type n, const value_type& val)
+            {
+
+            }
+                    //range (3)	
+            template <class InputIterator>
+            void insert (iterator position, InputIterator first, InputIterator last)
+            {
+
+            }
+            //erase
+            iterator erase (iterator position)
+            {
+				return (erase(position, position + 1));
+			}
+
+            iterator erase (iterator first, iterator last)
+            {
+
+			}
+                // swap
+            void swap (vector& x)
+            {
+                // vector<T> tmp;
+                // if (this != &x)
+                // {
+                //     tmp = x;
+                //     x = *this;
+                //     *this = tmp;
+                // }
+				if (this == &x)
+					return ;
+				ft::swap(this->_start, x._start);
+				ft::swap(this->_end, x._end);
+				ft::swap(this->_end_capacity, x._end_capacity);
+				ft::swap(this->_size,x._size);
+				ft::swap(this->_capacity,x._capacity);
+            }
+                // clear
+            void clear()
+            {
+                this->resize(0);
+            }
+            
+            // Allocator
+                // get_allocator
+            allocator_type get_allocator() const
+            {
+                return (_alloc);
+            }
+        /*
+        * Non-Member overloads :
+        */
+            // relatoin operation
+        template <class T, class Alloc>
+        bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        {
+			return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+		}
+
+        template <class T, class Alloc>
+        bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        {
+			return (!(lhs == rhs);)
+		}
+
+        template <class T, class Alloc>
+        bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        {
+			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+		}
+
+        template <class T, class Alloc>
+        bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        {
+			return (!(rhs < lhs));
+		}
+
+        template <class T, class Alloc>
+        bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        {
+			return (rhs < lhs);
+		}
+
+        template <class T, class Alloc>
+        bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        {
+			return (!(lhs < rhs));
+		}
+
+        //     // swap
+		/**
+		 * @brief Exchange contents of vectors
+		 * The contents of container x are exchanged with those of y.
+		 * @tparam T 
+		 * @tparam Alloc 
+		 * @param x vector container of the same type.
+		 * @param y vector container of the same type.
+		 */
+		template <typename T, typename Alloc>
+		void swap(vector<T, Alloc>& x, vector<T, Alloc>& y)
+		{ 
+			x.swap(y); 
+		}
 
     };
 }   
