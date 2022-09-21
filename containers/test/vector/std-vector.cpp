@@ -24,7 +24,7 @@ int main()
     for (it = v.begin(); it != v.end(); it++)
 		std::cout << *it << " ";
 	std::cout << std::endl;
-
+	
     std::cout << "ftftftftftftftftftftftft" << std::endl;
     for (ftit = ftv.begin(); ftit != ftv.end(); ftit++)
 	    std::cout << *ftit << " ";
@@ -160,21 +160,163 @@ int main()
 	for (ftrit = ftv4.rbegin(); ftrit != ftv4.rend(); ftrit++)
 		std::cout << *ftrit << " ";
 	std::cout << std::endl;
-	// std::cout << std::endl
-	// 		  << "#===== push_back =====#" << std::endl;
-	// v.resize(0);
-	// v.push_back(11);
-	// v.push_back(22);
-	// v.push_back(33);
+
+	ftv4.assign(10, 10);
+	for (ftrit = ftv4.rbegin(); ftrit != ftv4.rend(); ftrit++)
+		std::cout << *ftrit << " ";
+	std::cout << std::endl
+			  << "#===== push_back =====#" << std::endl;
+	v.resize(0);
+	v.push_back(11);
+	v.push_back(22);
+	v.push_back(33);
+	for (int i = 0; i < v.size(); i++)
+		std::cout << v.at(i) << " ";
+	std::cout << std::endl;
+
+	std::cout << "FT" << std::endl;
+	ftv.resize(0);
+	ftv.push_back(11);
+	ftv.push_back(22);
+	ftv.push_back(33);
+	for (int i = 0; i < ftv.size(); i++)
+		std::cout << ftv.at(i) << " ";
+	std::cout << std::endl;
+
+	std::cout << std::endl
+			  << "#===== pop_back =====#" << std::endl;
+	v.resize(1);
+	std::cout << v.size() << std::endl;
+	v.pop_back();
+	std::cout << v.size() << std::endl;
+	// v.pop_back();
+	
+	std::cout << "FT" << std::endl;
+	ftv.resize(1);
+	std::cout << ftv.size() << std::endl;
+	ftv.pop_back();
+	std::cout << ftv.size() << std::endl;
+	// v.pop_back();
+	std::cout << std::endl
+			  << "#===== insert =====#" << std::endl;
+	v.resize(3, 100);
+	v.insert(v.begin(), 200);
+	std::cout << "insert value: " << *it << std::endl;
+	for (int i = 0; i < v.size(); i++)
+		std::cout << v[i] << " ";
+	std::cout << std::endl;
+	v.insert(v.begin(), 2, 300);
+	for (int i = 0; i < v.size(); i++)
+		std::cout << v[i] << " ";
+	std::cout <<std::endl;
+	v.insert(v.begin(),v.begin(),v.end()-1);
+	for(int i =0; i< v.size(); i++)
+		std::cout << v[i] << " ";
+	std::cout << std::endl;
+
+	std::cout << "FT " << std::endl;
+	ftv.resize(3, 100);
+	ftv.insert(ftv.begin(), 200);
+	for (int i = 0; i < ftv.size(); i++)
+		std::cout << ftv[i] << " ";
+	std::cout << std::endl;
+	ftv.insert(ftv.begin(), 2, 300);
+	for (int i = 0; i < ftv.size(); i++)
+		std::cout << ftv[i] << " ";
+	std::cout << std::endl;
+	ftv.insert(ftv.begin(),ftv.begin(),ftv.end()-1);
+	for (int i = 0; i < ftv.size(); i++)
+		std::cout << ftv[i] << " ";
+
+	std::cout << std::endl
+			  << "#===== erase =====#" << std::endl;
+	for (int i = 0; i < v2.size(); i++)
+		std::cout << v2[i] << " ";
+	std::cout << std::endl;	
+	v2.erase(v2.begin());
+	for (int i = 0; i < v2.size(); i++)
+		std::cout << v2[i] << " ";
+	std::cout << std::endl;
+
+	std::cout << "FT" << std::endl;
+	for (int i = 0; i < ftv2.size(); i++)
+		std::cout << ftv2[i] << " ";
+	std::cout << std::endl;
+	ftv2.erase(ftv2.begin());
+	for (int i =0; i< ftv2.size(); i++)
+		std::cout << ftv2[i] << " ";
+	std::cout << std::endl;
+	// v.erase(v.begin() + 2);
 	// for (int i = 0; i < v.size(); i++)
-	// 	std::cout << v.at(i) << " ";
+	// 	std::cout << v[i] << " ";
+	// std::cout << std::endl;
+	// v.erase(v.begin() + 1, v.begin() + 3);
+	// for (int i = 0; i < v.size(); i++)
+	// 	std::cout << v[i] << " ";
 	// std::cout << std::endl;
 
-	// std::cout << std::endl
-	// 		  << "#===== pop_back =====#" << std::endl;
-	// v.resize(1);
-	// std::cout << v.size() << std::endl;
-	// v.pop_back();
-	// std::cout << v.size() << std::endl;
-	// // v.pop_back();
+	std::cout << std::endl
+			  << "#===== swap =====#" << std::endl;
+	v.resize(10, 2);
+    v2.resize(5, 1);
+    std::cout << &v2 << std::endl;
+    std::cout << v2.size() << " " << v2.capacity() << std::endl;
+    for (int i = 0; i < v2.size(); i++)
+        std::cout << v2[i] << " ";
+    std::cout << std::endl;
+    v.swap(v2);
+    std::cout << &v2 << std::endl;
+    std::cout << v2.size() << " " << v2.capacity() << std::endl;
+    for (int i = 0; i < v2.size(); i++)
+        std::cout << v2[i] << " ";
+    std::cout << std::endl;
+
+	std::cout << "FT "<< std::endl;
+	ftv.resize(10, 2);
+    ftv2.resize(5, 1);
+    std::cout << &ftv2 << std::endl;
+    std::cout << ftv2.size() << " " << ftv2.capacity() << std::endl;
+    for (int i = 0; i < ftv2.size(); i++)
+        std::cout << ftv2[i] << " ";
+    std::cout << std::endl;
+    ftv.swap(ftv2);
+    std::cout << &ftv2 << std::endl;
+    std::cout << ftv2.size() << " " << v2.capacity() << std::endl;
+    for (int i = 0; i < ftv2.size(); i++)
+        std::cout << ftv2[i] << " ";
+    std::cout << std::endl;
+	//
+
+	std::cout << std::endl
+			  << "#===== swap =====#" << std::endl;
+	v.clear();
+	std::cout << v.size() << " " << v.capacity() << std::endl;
+
+	std::cout << "FT" << std::endl;
+	ftv.clear();
+	std::cout << ftv.size() << " " << ftv.capacity() << std::endl;
+
+	std::cout << std::endl
+			  << "#===== get_allocator =====#" << std::endl;
+	int *p;
+	p = v.get_allocator().allocate(5);
+	for (int i = 0; i < 5; i++)
+		v.get_allocator().construct(&p[i], i);
+	std::cout << "The allocated array contains:";
+	for (int i = 0; i < 5; i++)
+		std::cout << ' ' << p[i];
+	std::cout << std::endl;
+
+	std::cout << std::endl
+			  << "#===== FT get_allocator =====#" << std::endl;
+	int *pp;
+	pp = ftv.get_allocator().allocate(5);
+	for (int i = 0; i < 5; i++)
+		ftv.get_allocator().construct(&pp[i], i);
+	std::cout << "The allocated array contains:";
+	for (int i = 0; i < 5; i++)
+		std::cout << ' ' << pp[i];
+	std::cout << std::endl;
+	system("leaks a.out");
+
 }
