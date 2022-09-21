@@ -377,16 +377,40 @@ namespace ft
             {
                 size_type pos = position - this->begin();
                 this->insert(position,1,val);
+				return (this->begin() + pos);
             }
                     //fill (2)	
             void insert (iterator position, size_type n, const value_type& val)
             {
+				size_type i = position - this->begin();
 
+				if (_size + n > _capacity)
+					this->reserve(_size + n);
+				for (iterator it = this->end(); it != position; --it)
+					*(it-1 + n) = *(it-1);
+				for (size_type k = 0; k < n; ++k)
+					_alloc.construct(_start + i + k,val);
+				_size += n;
+				_end = _start + _size + n;
             }
                     //range (3)	
             template <class InputIterator>
-            void insert (iterator position, InputIterator first, InputIterator last)
+            void insert (iterator position, 
+						typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, 
+						InputIterator last)
             {
+				size_type i = position - this->begin();
+				size_type n =0;
+				for (InputIterator it = first; it != last; ++it)
+					++n;
+				if (_size + n > _capacity)
+					this->reserve(_size + n);
+				for (iterator it = this->end(); it != position; --it)
+					*(it -1 + n) = *(it-1);
+				for (size_type k = 0; k < n; ++k)
+					_alloc.construct(_start + i + k, *first++);
+				_size += n;
+				_end = _start + _size + n;
 
             }
             //erase
@@ -397,13 +421,32 @@ namespace ft
 
             iterator erase (iterator first, iterator last)
             {
-
+				size_type i = 0;
+				iterator temp;
+				temp = first;
+				// for (iterator it = first; it != last; ++it)
+				while(temp != last)
+				{
+					_alloc.destroy(&(*temp));
+					temp++;
+				}
+				// for (iterator it = last + 1; it != this->end(); ++it)
+				temp = last;
+				while(temp != this->end())
+				{
+					*(first + i) = *temp;
+					++i;
+					++temp;
+				}
+				_size -= last - first;
+				_end = _end - (last - first);
+				return first;
 			}
                 // swap
             void swap (vector& x)
             {
                 // vector<T> tmp;
-                // if (this != &x)
+                // if (this != &x
                 // {
                 //     tmp = x;
                 //     x = *this;
@@ -429,42 +472,43 @@ namespace ft
             {
                 return (_alloc);
             }
+		};
         /*
         * Non-Member overloads :
         */
             // relatoin operation
         template <class T, class Alloc>
-        bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        bool operator==(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
         {
 			return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
 		}
 
         template <class T, class Alloc>
-        bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        bool operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
         {
-			return (!(lhs == rhs);)
+			return (!(lhs == rhs));
 		}
 
         template <class T, class Alloc>
-        bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        bool operator<(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
         {
 			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 		}
 
         template <class T, class Alloc>
-        bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
         {
 			return (!(rhs < lhs));
 		}
 
         template <class T, class Alloc>
-        bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        bool operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
         {
 			return (rhs < lhs);
 		}
 
         template <class T, class Alloc>
-        bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+        bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
         {
 			return (!(lhs < rhs));
 		}
@@ -483,7 +527,6 @@ namespace ft
 		{ 
 			x.swap(y); 
 		}
-
-    };
-}   
+	
+}
 #endif
