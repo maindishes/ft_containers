@@ -24,7 +24,7 @@ namespace ft
             ++first1; 
             ++first2;
         }
-        return ture;
+        return true;
     }
         // predicate (2)	
     template <class InputIterator1, class InputIterator2, class BinaryPredicate>  
@@ -49,7 +49,7 @@ namespace ft
             if (first2 == last2 || *first2 < *first1)
                 return false;
             else if (*first1 < *first2)
-                return ture;
+                return true;
             ++first1;
             ++first2;
         }
@@ -64,7 +64,7 @@ namespace ft
             if (first2 == last2 || comp(*first2, *first1))
                 return false;
             else if ( comp(*first1, *first2))
-                return ture;
+                return true;
         }
         return (first2 != last2);
     }
