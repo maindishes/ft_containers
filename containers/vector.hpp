@@ -51,25 +51,24 @@ namespace ft
 
         //Member variables
         protected:
-            size_type       _size;    // current size
-            size_type       _capacity;// allocated size
-
             allocator_type  _alloc;
             pointer         _end_capacity;
             pointer         _start;
             pointer         _end;
 
+            size_type       _size;    // current size
+            size_type       _capacity;// allocated size
 
         //Member functions
         public:
             //empty container constructor (default constructor)
             explicit vector (const allocator_type& alloc = allocator_type())
-            : _alloc(alloc), _start(0), _end(0), _end_capacity(0), _size(0),_capacity(0)
+            : _alloc(alloc), _end_capacity(0),_start(0), _end(0), _size(0),_capacity(0)
             {}
             
             //fill constructor	
             explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
-            : _alloc(alloc), _capacity(n), _size(n)
+            : _alloc(alloc), _size(n), _capacity(n)
             {
                 this->_start = _alloc.allocate(n);
                 this->_end = this->_start;
@@ -92,6 +91,7 @@ namespace ft
                     _capacity++;
                 _start = _alloc.allocate(_capacity);
                 _end = _start + _capacity;
+                // this->_end_capacity = this->_start + n;
                 for (_size = 0; _size < _capacity; _size++)
                     _alloc.construct(_start + _size, *first++);
                 // std::cout << "OUT--------------" << std::endl; 
@@ -99,24 +99,28 @@ namespace ft
             
             // copy constructor 
             vector (const vector& x)
-            : _alloc(x._alloc), _capacity(x._capacity), _size(x._size)
+            : _alloc(x._alloc),_size(x._size), _capacity(x._capacity)
             {
-                // size_type n = x.size();
+                size_type n = x.size();
                 this->_start = this->_alloc.allocate(_capacity);
                 this->_end = _start;
-                this->_end_capacity = _start + _capacity;
+                this->_end_capacity = _start + n;
+                // pointer x_start = x._start;
+                // while(n--)
+                // {
+                //     _alloc.construct(_end++, *x_start++);
+                // }
                 for (size_type i = 0; i < _size; ++i)
                 {
-                    _alloc.construct(_end++, x[i]);
+                    _alloc.construct(_start + i, x[i]);
                 }
+                _end = _start  + n;
             }
 
             //destructor
             virtual ~vector()
             {
-                while(this->_start != this->_end) {
-                    this->_alloc.destroy(--_end);
-                }
+                this->clear();
                 this->_alloc.deallocate(this->_start, size_type(this->_end_capacity - this->_start));
                 // std::cout << "Finish" << std::endl;
             }
@@ -196,8 +200,7 @@ namespace ft
             void resize (size_type n, value_type val = value_type())
             {
                 //erase, insert
-                // if (n > this->max_size())
-                //     throw std::out_of_range("ft::vector");
+                // end_capacity update need
                 if (n < this->_size)
                 {
                     for(size_type i = n; i < _size; i++)
@@ -210,6 +213,7 @@ namespace ft
                         _alloc.construct(_start + i, val);
                 }
                 _size = n;
+                _end_capacity = _start+n;
                 _end = _start + n;
             }
                 // capacity
