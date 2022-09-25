@@ -123,37 +123,37 @@ class random_access_iterator: public ft::iterator<typename ft::iterator_traits<I
 // Non-member function overloads
 // relational operators
 // list 에선 random_access_
-template <class Iterator1, class Iterator2, typename Container>
+template <class Iterator1, class Iterator2, class Container>
 bool operator==(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
 {
     return (lhs.base() == rhs.base());
 }
 
-template <class Iterator1, class Iterator2, typename Container>
+template <class Iterator1, class Iterator2, class Container>
 bool operator!=(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
 {
     return !(lhs == rhs);
 }
 
-template <class Iterator1, class Iterator2, typename Container>
+template <class Iterator1, class Iterator2, class Container>
 bool operator<(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
 {
     return (lhs.base() < rhs.base());
 }
 
-template <class Iterator1, class Iterator2, typename Container>
+template <class Iterator1, class Iterator2, class Container>
 bool operator<=(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
 {
     return !(rhs < lhs);
 }
 
-template <class Iterator1, class Iterator2, typename Container>
+template <class Iterator1, class Iterator2, class Container>
 bool operator>(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
 {
     return (rhs < lhs);
 }
 
-template <class Iterator1, class Iterator2, typename Container>
+template <class Iterator1, class Iterator2, class Container>
 bool operator>=(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
 {
     return !(lhs < rhs);
