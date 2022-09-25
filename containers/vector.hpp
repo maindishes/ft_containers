@@ -304,8 +304,9 @@ namespace ft
                     ++n;
                 // std::cout << n << std::endl;
                 // this->reserve(n);
-                while (this->_start != this->_end)
-                    _alloc.destroy(--this->_end);
+                // while (this->_start != this->_end)
+                //     _alloc.destroy(--this->_end);
+                this->clear();
                 if (this->capacity() < n)
                 {
                     _alloc.deallocate(_start, capacity());
@@ -320,6 +321,7 @@ namespace ft
                     // std::cout << "n : " << n << std::endl;
                 }
                 _size = n;
+                _capacity = n;
 
                 // this->reserve(n);
                 // for (size_type i = 0; i < n; ++i)
@@ -338,8 +340,9 @@ namespace ft
             {
                 //clear
                 // this->reserve(n);
-                while (this->_start != this->_end)
-                    _alloc.destroy(--this->_end);
+                // while (this->_start != this->_end)
+                //     _alloc.destroy(--this->_end);
+                this->clear();
                 if (this->_capacity < n)
                 {
                     _alloc.deallocate(_start, _capacity);
@@ -353,6 +356,7 @@ namespace ft
                     // std::cout << "n : " << n << std::endl;
                 }
                 _size = n;
+                _capacity = n;
             }
             
                 // push_back
@@ -395,7 +399,7 @@ namespace ft
 				for (size_type k = 0; k < n; ++k)
 					_alloc.construct(_start + i + k,val);
 				_size += n;
-				_end = _start + _size + n;
+				// _end = _start + _size + n;
             }
                     //range (3)	
             template <class InputIterator>
@@ -414,7 +418,7 @@ namespace ft
 				for (size_type k = 0; k < n; ++k)
 					_alloc.construct(_start + i + k, *first++);
 				_size += n;
-				_end = _start + _size + n;
+				// _end = _start + _size + n;
 
             }
             //erase
