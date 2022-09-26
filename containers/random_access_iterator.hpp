@@ -5,7 +5,7 @@
 
 namespace ft
 {
-template <typename Iterator, typename Container> 
+template <typename Iterator> 
 class random_access_iterator: public ft::iterator<typename ft::iterator_traits<Iterator>::iterator_category,
                                                   typename ft::iterator_traits<Iterator>::value_type,
                                                   typename ft::iterator_traits<Iterator>::difference_type,
@@ -36,8 +36,9 @@ class random_access_iterator: public ft::iterator<typename ft::iterator_traits<I
         // : _M_current(__x._M_current) {}
 
         template<class Iter>       // copy (3)
-        random_access_iterator(const random_access_iterator<Iter, Container>& it)
+        random_access_iterator(const random_access_iterator<Iter>& it)
         :current_state(it.base()) {}
+        
     // 소멸자
         virtual ~random_access_iterator() {}
         
@@ -123,38 +124,38 @@ class random_access_iterator: public ft::iterator<typename ft::iterator_traits<I
 // Non-member function overloads
 // relational operators
 // list 에선 random_access_
-template <class Iterator1, class Iterator2, class Container>
-bool operator==(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
+template <class Iterator1, class Iterator2>
+bool operator==(const random_access_iterator<Iterator1>& lhs, const random_access_iterator<Iterator2>& rhs)
 {
     return (lhs.base() == rhs.base());
 }
 
-template <class Iterator1, class Iterator2, class Container>
-bool operator!=(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
+template <class Iterator1, class Iterator2>
+bool operator!=(const random_access_iterator<Iterator1>& lhs, const random_access_iterator<Iterator2>& rhs)
 {
     return !(lhs == rhs);
 }
 
-template <class Iterator1, class Iterator2, class Container>
-bool operator<(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
+template <class Iterator1, class Iterator2>
+bool operator<(const random_access_iterator<Iterator1>& lhs, const random_access_iterator<Iterator2>& rhs)
 {
     return (lhs.base() < rhs.base());
 }
 
-template <class Iterator1, class Iterator2, class Container>
-bool operator<=(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
+template <class Iterator1, class Iterator2>
+bool operator<=(const random_access_iterator<Iterator1>& lhs, const random_access_iterator<Iterator2>& rhs)
 {
     return !(rhs < lhs);
 }
 
-template <class Iterator1, class Iterator2, class Container>
-bool operator>(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
+template <class Iterator1, class Iterator2>
+bool operator>(const random_access_iterator<Iterator1>& lhs, const random_access_iterator<Iterator2>& rhs)
 {
     return (rhs < lhs);
 }
 
-template <class Iterator1, class Iterator2, class Container>
-bool operator>=(const random_access_iterator<Iterator1, Container>& lhs, const random_access_iterator<Iterator2, Container>& rhs)
+template <class Iterator1, class Iterator2>
+bool operator>=(const random_access_iterator<Iterator1>& lhs, const random_access_iterator<Iterator2>& rhs)
 {
     return !(lhs < rhs);
 }
@@ -167,11 +168,11 @@ bool operator>=(const random_access_iterator<Iterator1, Container>& lhs, const r
  * @param it iterator.
  * @return An iterator pointing to the element n positions away from it.
  */
-template <typename Iterator, typename Container>
-random_access_iterator<Iterator, Container> operator+(
-	typename random_access_iterator<Iterator, Container>::difference_type n, const random_access_iterator<Iterator, Container> &it)
+template <typename Iterator>
+random_access_iterator<Iterator> operator+(
+	typename random_access_iterator<Iterator>::difference_type n, const random_access_iterator<Iterator> &it)
 { 
-    return random_access_iterator<Iterator, Container>(it.base() + n); 
+    return random_access_iterator<Iterator>(it.base() + n); 
 }
 
 /**
@@ -182,8 +183,8 @@ random_access_iterator<Iterator, Container> operator+(
  * @param rhs 
  * @return The number of elements between lhs and rhs.
  */
-template <typename Iterator1, typename Iterator2, typename Container>
-typename random_access_iterator<Iterator1, Container>::difference_type operator-(const random_access_iterator<Iterator1, Container> &lhs, const random_access_iterator<Iterator2, Container> &rhs)
+template <typename Iterator1, typename Iterator2>
+typename random_access_iterator<Iterator1>::difference_type operator-(const random_access_iterator<Iterator1> &lhs, const random_access_iterator<Iterator2> &rhs)
 { 
     return lhs.base() - rhs.base(); 
 }

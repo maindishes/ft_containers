@@ -42,8 +42,8 @@ namespace ft
             typedef typename allocator_type::const_reference    const_reference;
             typedef typename allocator_type::pointer            pointer;
             typedef typename allocator_type::const_pointer      const_pointer;
-            typedef ft::random_access_iterator<pointer, vector_type> iterator;
-            typedef ft::random_access_iterator<const_pointer, vector_type> const_iterator;
+            typedef ft::random_access_iterator<pointer> iterator;
+            typedef ft::random_access_iterator<const_pointer> const_iterator;
             typedef typename ft::reverse_iterator<iterator> reverse_iterator;
             typedef typename ft::reverse_iterator<const_iterator> const_reverse_iterator;
             typedef std::ptrdiff_t  difference_type;
@@ -135,6 +135,7 @@ namespace ft
                 this->_alloc.deallocate(this->_start, _capacity);
                 _capacity = x._capacity;
                 _start = _alloc.allocate(_capacity);
+                _size = x._size;
                 for (_size = 0; _size < x._size; ++_size)
                     _alloc.construct(_start + _size, x[_size]);
                 return (*this);
@@ -390,17 +391,18 @@ namespace ft
                     //fill (2)	
             void insert (iterator position, size_type n, const value_type& val)
             {
-				size_type i = position - this->begin();
-
-				if (_size + n > _capacity)
-					this->reserve(_size + n);
-				for (iterator it = this->end(); it != position; --it)
-					*(it-1 + n) = *(it-1);
+                size_type i = position - this->begin();
+                if ( n == 0)
+                    return ;
+				this->reserve(_size + n);
+				for (iterator it = this->end(); it != this->begin()+i; --it)
+					*(it -1 + n) = *(it-1);
 				for (size_type k = 0; k < n; ++k)
-					_alloc.construct(_start + i + k,val);
+					_alloc.construct(_start + i + k, val);
 				_size += n;
-				// _end = _start + _size + n;
+				_end += n;
             }
+    
                     //range (3)	
             template <class InputIterator>
             void insert (iterator position, 
@@ -409,16 +411,18 @@ namespace ft
             {
 				size_type i = position - this->begin();
 				size_type n =0;
+
 				for (InputIterator it = first; it != last; ++it)
 					++n;
-				if (_size + n > _capacity)
-					this->reserve(_size + n);
-				for (iterator it = this->end(); it != position; --it)
+                if ( n == 0)
+                    return ;
+				this->reserve(_size + n);
+				for (iterator it = this->end(); it != this->begin()+i; --it)
 					*(it -1 + n) = *(it-1);
 				for (size_type k = 0; k < n; ++k)
 					_alloc.construct(_start + i + k, *first++);
 				_size += n;
-				// _end = _start + _size + n;
+				_end += n;
 
             }
             //erase
