@@ -721,12 +721,16 @@ inline RB_tree_node<Key, T> *RB_tree<Key, T, Compare, Alloc>::RB_tree_erase_reba
 					s = x_parent->right;
 				}
 				// s is always BLACK
-				if ((s->left == NULL || s->left->color == BLACK) && (s->right == NULL || s->right->color == BLACK)) { // Case 1-1) && 2-1)
+				if ((s->left == NULL || s->left->color == BLACK) && (s->right == NULL || s->right->color == BLACK)) 
+				{ // Case 1-1) && 2-1)
 					s->color = RED;
 					x = x_parent;
 					x_parent = x_parent->parent;
-				} else {
-					if (s->right == NULL || s->right->color == BLACK) { // Case *-3)
+				} 
+				else 
+				{
+					if (s->right == NULL || s->right->color == BLACK) 
+					{ // Case *-3)
 						if (s->left) s->left->color = BLACK;
 						s->color = RED;
 						RB_tree_rotate_right(s, root);
@@ -740,7 +744,9 @@ inline RB_tree_node<Key, T> *RB_tree<Key, T, Compare, Alloc>::RB_tree_erase_reba
 					RB_tree_rotate_left(x_parent, root);
 					break ;
 				}
-			} else { // 위의 반대 버전
+			} 
+			else 
+			{ // 위의 반대 버전
 				RB_tree_node<Key, T> *s = x_parent->left;
 				if (s->color == RED) { // Case 2-4)
 					s->color = BLACK;
