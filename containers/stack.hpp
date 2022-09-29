@@ -19,11 +19,12 @@ namespace ft
         public:
             // Constructor
             explicit stack (const container_type& ctnr = container_type())
-            :_x(ctnr);
+            :_x(ctnr) {}
             // destructor
-            virtual ~stack();
+            virtual ~stack() {}
 
             // Member function
+            
             bool empty() const
             {
                 return (this->_x.empty());
@@ -32,7 +33,7 @@ namespace ft
             {
                 return (this->_x.size());
             }
-            value_type& top();
+            value_type& top()
             {
                 return (this->_x.back());
             }
@@ -48,19 +49,24 @@ namespace ft
             {
                 this->_x.pop_back();
             }
-        
+
+            template <class _Tp1, class _Seq1>
+            friend bool operator== (const stack<_Tp1, _Seq1>&, const stack<_Tp1, _Seq1>&);
+            template <class _Tp1, class _Seq1>
+            friend bool operator< (const stack<_Tp1, _Seq1>&, const stack<_Tp1, _Seq1>&);
+                    
     };
     // Non-member function overloads
     template <class T, class Container>
     bool operator== (const stack<T,Container>& lhs, const stack<T,Container>& rhs)
     {
-        return lhs._x == rhs._x;
+        return (lhs._x == rhs._x);
     }
 
     template <class T, class Container>
     bool operator!= (const stack<T,Container>& lhs, const stack<T,Container>& rhs)
     {
-        return !(lhs == rhs)
+        return !(lhs == rhs);
     }
 	
     template <class T, class Container>
@@ -72,7 +78,7 @@ namespace ft
     template <class T, class Container>
     bool operator<= (const stack<T,Container>& lhs, const stack<T,Container>& rhs)
     {
-        return !(lhs < rhs);
+        return !(rhs < lhs);
     }
 	
     template <class T, class Container>
