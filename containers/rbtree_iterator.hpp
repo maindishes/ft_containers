@@ -7,7 +7,7 @@
 
 namespace ft
 {
-    template<class T>
+    template<typename T>
     class rbtree_iterator
     {
         typedef ft::bidirectional_iterator_tag iterator_category;
@@ -27,7 +27,7 @@ namespace ft
         : _node(NULL) 
         {}
 
-        explicit rbtree_iterator(node_ptr x)
+        explicit rbtree_iterator(const node_ptr &x)
         : _node(x)
         {}
 
@@ -42,6 +42,11 @@ namespace ft
             _node = x._node;
             return *this;
         }
+        rbtree_iterator &operator=(const node_ptr& p)
+        {
+            _node= p;
+            return *this;
+        }
 
         virtual ~rbtree_iterator() {}
 
@@ -54,14 +59,14 @@ namespace ft
         {
             return &(_node->data);
         }
-        bool operator==(const rbtree_iteraotr &x)
-        {
-            return (_node == x._node);
-        }
-        bool operator!=(const rbtree_iterator &x)
-        {
-            return (_node != x._node);
-        }
+        // bool operator==(const rbtree_iteraotr &x)
+        // {
+        //     return (_node == x._node);
+        // }
+        // bool operator!=(const rbtree_iterator &x)
+        // {
+        //     return (_node != x._node);
+        // }
         // operation++
         void increment()
         {
@@ -131,7 +136,26 @@ namespace ft
             decrement();
             return *this;
         }
+        
+        node_ptr base() const
+        {
+            return _node;
+        }
     };
+    template <typename Value>
+    bool operator==(const rbtree_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
+    {
+        return (rhs.base() == lhs.base());
+    }
+
+    template <typename Value>
+    bool operator!=(const rbtree_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
+    {
+        return (lhs.base() == rhs.base());
+    }
+
+
+
     //rbtree_const_iterator
     template<class T>
     class rbtree_const_iterator
@@ -165,10 +189,15 @@ namespace ft
         template <class U>      // copy assignment
         rbtree_const_iterator &operator=(const rbtree_const_iterator<U> &x)
         {
-            _node = x._node;
+            if (this!= &x)
+                _node = x._node;
             return *this;
         }
-
+        rbtree_const_iterator& operator=(const const_node_ptr& it)
+        {
+            _node = p;
+            return *this;
+        }
         virtual ~rbtree_const_iterator() {}
 
         //
@@ -180,14 +209,14 @@ namespace ft
         {
             return &(_node->data);
         }
-        bool operator==(const rbtree_iteraotr &x)
-        {
-            return (_node == x._node);
-        }
-        bool operator!=(const rbtree_const_iterator &x)
-        {
-            return (_node != x._node);
-        }
+        // bool operator==(const rbtree_iteraotr &x)
+        // {
+        //     return (_node == x._node);
+        // }
+        // bool operator!=(const rbtree_const_iterator &x)
+        // {
+        //     return (_node != x._node);
+        // }
         // operation++
         void increment()
         {
@@ -206,7 +235,7 @@ namespace ft
                     p = p->_parent;
                 }
                 if (_node->_right != p)
-                    node = p;
+                    _node = p;
             }
         }
 
@@ -257,7 +286,35 @@ namespace ft
             decrement();
             return *this;
         }
+        const_node_ptr base() const
+        {
+            return _node;
+        }
     };
+
+    template <typename Value>
+    bool operator==(const rbtree_const_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
+    {
+        return (rhs.base() == lhs.base());
+    }
+
+    template <typename Value>
+    bool operator!=(const rbtree_const_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
+    {
+        return (lhs.base() != rhs.base());
+    }
+
+    template <typename Value>
+    bool operator==(const rbtree_const_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
+    {
+        return (rhs.base() == lhs.base());
+    }
+
+    template <typename Value>
+    bool operator!=(const rbtree_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
+    {
+        return (lhs.base() != rhs.base());
+    }
 
 }
 
