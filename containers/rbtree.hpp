@@ -46,6 +46,8 @@
 #include <functional> // std::less
 #include <iostream>
 #include "type_trait.hpp"
+#include "pair.hpp"
+
 
 namespace ft
 {
@@ -57,7 +59,7 @@ namespace ft
     };
     // Red-Black Tree Node
 
-    template <typename T> 
+    template <typename T > 
     class rbtree_node
     {
         public :
@@ -74,54 +76,21 @@ namespace ft
             node_ptr    _right;
 
             // Member functions :
-            rbtree_node()
-            : _data(NULL),_color(BLACK),_parent(NULL), _left(NULL), _right(NULL)
-            {}
+            // rbtree_node()
+            // : _data(NULL),_color(BLACK),_parent(NULL), _left(NULL), _right(NULL)
+            // {}
 
-            rbtree_node(value_type data, int color)
-            : _parent(NULL), _left(NULL), _right(NULL), _color(color),_data(data)
+            rbtree_node(node_ptr parent, node_ptr left, node_ptr right, value_type data, int color)
+            : _parent(parent), _left(left), _right(right), _data(data), _color(color)
             {}
 
             rbtree_node(const rbtree_node &x)
-            : _data(x._data), color(x._color)
+            : _data(x._data), _color(x._color), _parent(x._parent), _left(x._left), _right(x._right)
             {}
 
           
             virtual ~rbtree_node() {}
             
-            static bool isTNULL(node_ptr x)
-            {
-                return (x->_parent == NULL);
-            }
-            static bool isTNULL(const_node_ptr x)
-            {
-                return (x->_parent == NULL);
-            }
-            static node_ptr minimum(node_ptr x)
-            {
-                while (!isTNULL(x->_left))
-                    x = x->_left;
-                return x;
-            }
-            static const_node_ptr minimum(const_node_ptr x)
-            {
-                while (!isTNULL(x->_left))
-                    x = x->_left;
-                return x;
-            }
-            static node_ptr maximum(node_ptr x)
-            {
-                while (!isTNULL(x->_right))
-                    x = x->_right;
-                return x;
-            }
-            static const_node_ptr minimum(const_node_ptr x)
-            {
-                while (!isTNULL(x->_right))
-                    x = x->_right;
-                return x;
-            }
-
             rbtree_node &operator=(const rbtree_node& n)
             {
                 if (this != &n)
@@ -134,66 +103,60 @@ namespace ft
                 }
                 return *this;
             }
-            static node_ptr increment(node_ptr x)
+
+            static bool isTNULL(node_ptr x)
             {
-                // (!isTNULL(x->right))
-                if (x->_right != NULL)
-                {
-                    x = x->_right;
-                }
-                while(x->_left != NULL)
-                    x = x->_left;
+                if (x && x->_left == NULL)
+                    return true;
                 else
-                {
-                    node_ptr p = x->_parent;
-                    while (x == p->_right)
-                    {
-                        x = p;
-                        p = p->parent;
-                    }
-                    if (x->_right != p)
-                    {
-                        x = p;
-                    }
-                }
+                    return false;
+            }
+            static bool isTNULL(const_node_ptr x)
+            {
+                if (x->_left == NULL)
+                    return true;
+                else
+                    return false;
+            }
+            static node_ptr minimum(node_ptr x)
+            {
+                while (x->_left != NULL)
+                    x = x->_left;
                 return x;
             }
-
-            static node_ptr decrement(node_ptr x)
+            static const_node_ptr minimum(const_node_ptr x)
             {
-                if (x->_color == RED && x->_parent->_parent == x) // case header
+                while (x->_left != NULL)
+                    x = x->_left;
+                return x;
+            }
+            static node_ptr maximum(node_ptr x)
+            {
+                while (x->_right != NULL)
                     x = x->_right;
-        
-                else if (x->_left != NULL)
-                {
-                    node_ptr y = x->_left;
-                    while (y->_right != NULL)
-                        y = y->_right;
-                    x = y;
-                }
-                else
-                {
-                    node_ptr p = x->_parent;
-                    while ( x == p->_left)
-                    {
-                        x = p;
-                        p = p->_parent;
-                    }
-                    x = p;
-                }
+                return x;
+            }
+            static const_node_ptr maximum(const_node_ptr x)
+            {
+                while (x->_right != NULL)
+                    x = x->_right;
                 return x;
             }
 
     };
-    template <typename T, typename Compare = std::less<T>, typename Alloc = std::allocator<T> >
+
+
+    // rbtree;
+    template <typename Key, typename Val, typename KeyOfValue, typename Compare = std::less<T>, typename Alloc = std::allocator<T> >
     class rbtree
     {
         public:
         // type definitions
             // Member types
-            typedef T value_type;
+            typedef Key key_type;
+            typedef Val value_type;
             typedef Alloc allocator_type;
-            typedef Compare value_compare;
+            typedef Compare key_compare;
 
             typedef rbtree_node<value_type> node_type;
             typedef std::allocator<node_type> node_allocator_type;
@@ -204,7 +167,8 @@ namespace ft
             node_allocator_type _node_alloc;
             node_ptr _root;
             node_ptr _TNULL;
-            value_compare _comp_val;
+            key_compare _comp;
+            size_type _node_cnt;
             
             // size_type _node_cnt;
 
@@ -212,17 +176,39 @@ namespace ft
                 // rb_tree val 은 mapped_type과  key_type을 pair 로 묶은 val 이다.
                 // std::less() 에서 () 연산자 가 val.first,(first로만) 로 값을 비교해준다.
             rb_tree()
-            :_comp_val(value_compare())
+            :_node_cnt(0)
             {
-                _TNULL = _node_alloc.allocate(1);
-                node_type temp(value_type(), BLACK);
-                _node_alloc.construct(_TNULL, temp);
-                _root = _TNULL;
+                _TNULL = _getnode(node_type(NULL, NULL, NULL, value_type(), BLACK));
+                _root = _getnode(node_type(NULL, _TNULL, _TNULL, value_type(), RED));
+                _TNULL->_parent = _root;
             }
-                // get_root
-            const node_ptr &get_root() const
+            
+            bool _equal(const value_type &a, const value_type &b)
+			{
+				return (!_comp(a,b) && !_comp(b,a));
+			}
+            
+            node_ptr _getnode(node_type temp)
             {
-                return _root;
+                node_ptr ptr = _node_alloc.allocate(1);
+                _node_alloc.construct(ptr, tmep);
+                return ptr;
+            }
+            
+            node_ptr _find_key(key_type data)
+            {
+                node_ptr temp = _root;
+
+                while (temp != _TNULL && !_eual(data, KeyOfValue()(temp->data))
+                {
+                    if (_comp(data, KeyOfValue()(temp->data))
+						temp = temp->_left;
+					else
+						temp = temp->_right;
+                }
+                if (temp == _TNULL)
+                    return NULL;
+				return temp;
             }
                 // insertNode
             void insert_node(const value_type &data)
@@ -235,7 +221,7 @@ namespace ft
                 {
                     y = x;
                     // data < x->data
-                    if (_comp_val(z->data, x->data))
+                    if (_comp(z->data, x->data))
                         x = x->_left;
                     else
                         x = x->_right;
@@ -244,7 +230,7 @@ namespace ft
                 z->_parent = y;
                 if (y == NULL)
                     _root = z;
-                else if (_comp_val(z->data, y->data))
+                else if (_comp(z->data, y->data))
                     y->_left = z;
                 else
                     y->_right = z;
@@ -307,40 +293,20 @@ namespace ft
 				}
 				return true;
 			}
-			
+
         private:
             // Private member functions
-            node_ptr _getnode(node_ptr parent, const value_type &data, const int &color)
+               // get_root
+            const node_ptr &get_root() const
             {
-                node_ptr ptr = _node_alloc.allocate(1);
-                node_type temp(data, color);
-
-                temp._parent = _TNULL;
-                temp._left = _TNULL;
-                temp._right = _TNULL;
-                _node_alloc.construct(ptr, tmep);
-
-                return ptr;
+                return _root;
             }
-
-			bool _equal(const value_type &a, const value_type &b)
-			{
-				return (!_comp_val(a,b) && !_comp_val(b,a));
-			}
-   
-            node_ptr _find_key(value_type data)
+                // getTNULL
+            const node_ptr &getTNULL() const
             {
-                node_ptr temp = _root;
-
-                while (temp != _TNULL && !_eual(data, temp->data))
-                {
-                    if (_comp_val(data, t->data))
-						temp = temp->_left;
-					else
-						temp = temp->_right;
-                }
-				return temp;
+                return _TNULL;
             }
+            
 
 			// *Transplant => 삭제 시 이용하며, 삭제할 노드의 자식 노드를 부모노드에 연결해주는 함수
 			void _rb_transplant(node_ptr u, node_ptr v)
