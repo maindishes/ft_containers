@@ -51,7 +51,6 @@
 
 namespace ft
 {
-    
     enum node_color
     {
         RED,
@@ -65,8 +64,10 @@ namespace ft
         public :
             // Member types
             typedef T   value_type;
-            typedef rbtree_node<value_type> *node_ptr;
-            typedef const rbtree_node<value_type> *const_node_ptr;
+            typedef rbtree_node<value_type> node_type;
+            typedef const rbtree_node<node_type> node_allocator_type;
+            typedef node_type *node_ptr;
+            typedef const node_type *const_node_ptr;
             
             value_type _data;
             // color_type  _color;
@@ -153,24 +154,22 @@ namespace ft
         public:
         // type definitions
             // Member types
-            typedef Key key_type;
-            typedef Val value_type;
-            typedef Alloc allocator_type;
-            typedef Compare key_compare;
+            typedef Key                                                    key_type;
+            typedef Val                                                    value_type;
+            typedef Alloc                                                  allocator_type;
+            typedef Compare                                                key_compare;
 
-            typedef rbtree_node<value_type> node_type;
-            typedef std::allocator<node_type> node_allocator_type;
-            typedef typename ft::rbtree_node<value_type>::node_ptr node_ptr;
-            typedef typename ft::rbtree_node<value_type>::const_node_ptr const_node_ptr;
+            typedef rbtree_node<value_type>                                node_type;
+            typedef typename node_type::node_allocator_type                node_allocator_type;
+            typedef typename ft::rbtree_node<value_type>::node_ptr         node_ptr;
+            typedef typename ft::rbtree_node<value_type>::const_node_ptr   const_node_ptr;
 
             // Member variables
-            node_allocator_type _node_alloc;
-            node_ptr _root;
-            node_ptr _TNULL;
-            key_compare _comp;
-            size_type _node_cnt;
-            
-            // size_type _node_cnt;
+            node_allocator_type     _node_alloc;
+            node_ptr                _root;
+            node_ptr                _TNULL;
+            key_compare             _comp;
+            size_type               _node_cnt;
 
             // Member functions
                 // rb_tree val 은 mapped_type과  key_type을 pair 로 묶은 val 이다.
@@ -199,9 +198,9 @@ namespace ft
             {
                 node_ptr temp = _root;
 
-                while (temp != _TNULL && !_eual(data, KeyOfValue()(temp->data))
+                while (temp != _TNULL && !_eual(data, KeyOfValue()(temp->data)))
                 {
-                    if (_comp(data, KeyOfValue()(temp->data))
+                    if (_comp(data, KeyOfValue()(temp->data)))
 						temp = temp->_left;
 					else
 						temp = temp->_right;
@@ -210,10 +209,27 @@ namespace ft
                     return NULL;
 				return temp;
             }
+            void swap(rbtree &x)
+            {
+                ft::swap(_node_alloc, x._node_alloc);
+                ft::swap(_root, x._root);
+                ft::swap(_TNULL, x._TNULL);
+                ft::swap(_comp, x._comp);
+                ft::swap(_node_cnt, x._node_cnt);
+            }
+
+            // insert node in rb
+            node_ptr _rb_insert(const value_type &data)
+            {
+                ++_node_cnt;
+                node_ptr temp = _insert_node(data);
+                _TNULL->_parent = _root;
+                return temp;
+            }
                 // insertNode
-            void insert_node(const value_type &data)
-            { 
-                node_ptr z = _getnode(NULL, data, RED);
+            void _insert_node(const value_type &data)
+            {
+                node_ptr z = _getnode(node_type(NULL, _TNULL,_TNULL, data,RED));
                 node_ptr y = NULL;
                 node_ptr x = _root;
 
@@ -243,9 +259,17 @@ namespace ft
                     return ;
                 _insert_fix(z);
             }
-
+            // delete node in rbtree
+            void _rb_delete(const node_ptr &x)
+            {
+                --_node_cnt;
+                _delete_node(x);
+                if (_root == _TNULL)
+                    _root = _getnode(node_type(NULL, _TNULL, _TNULL, value_type(), RED));
+                _TNULL->-parent = _root;
+            }
 			// deleteNode
-			bool deleteNode(const value_type &data)
+			bool _delete_node(const value_type &data)
 			{
 				node_ptr z = _find_key(data);
 				node_ptr x, y;
