@@ -17,257 +17,175 @@ namespace ft
 	struct rbtree_node
 	{
 		typedef Val value_type;
-		typedef rbtree_node<value_type> *node_ptr;
-		typedef const rbtree_node<value_type> *const_node_ptr;
+		typedef rbtree_node<value_type> node_type;
+		typedef std::allocator<node_type> node_allocator_type;
+		typedef node_type *node_ptr;
+		typedef const node_type *const_node_ptr;
 
-		value_type data;
 		node_ptr parent;
 		node_ptr left;
 		node_ptr right;
+		value_type data;
 		int color;
 
-		rbtree_node(value_type data, int color)
-			: parent(NULL), left(NULL), right(NULL), color(color), data(data)
+		rbtree_node(node_ptr parent, node_ptr left, node_ptr right, value_type data, int color)
+			: parent(parent), left(left), right(right), data(data), color(color)
 		{
 		}
 
 		static bool isTNULL(node_ptr x)
 		{
-			return (x->parent == NULL);
+			if (x && x->left == NULL)
+				return true;
+			else
+				return false;
 		}
 
 		static bool isTNULL(const_node_ptr x)
 		{
-			return (x->parent == NULL);
+			if (x && x->left == NULL)
+				return true;
+			else
+				return false;
 		}
 
 		static node_ptr minimum(node_ptr x)
 		{
-			while (!isTNULL(x->left))
+			while (x && !isTNULL(x->left))
 				x = x->left;
 			return x;
 		}
-		
+
 		static const_node_ptr minimum(const_node_ptr x)
 		{
-			while (!isTNULL(x->left))
+			while (x && !isTNULL(x->left))
 				x = x->left;
 			return x;
 		}
 
 		static node_ptr maximum(node_ptr x)
 		{
-			while (!isTNULL(x->right))
+			while (x && !isTNULL(x->right))
 				x = x->right;
 			return x;
 		}
-		
+
 		static const_node_ptr maximum(const_node_ptr x)
 		{
-			while (!isTNULL(x->right))
+			while (x && !isTNULL(x->right))
 				x = x->right;
-			return x;
-		}
-
-		static node_ptr increment(node_ptr x)
-		{
-			if (!isTNULL(x->right))
-			{
-				x = x->right;
-				while (!isTNULL(x->left))
-				{
-					x = x->left;
-				}
-			}
-			else
-			{
-				node_ptr y = x->parent;
-				while (x == y->right)
-				{
-					x = y;
-					y = y->parent;
-				}
-				if (x->right != y)
-				{
-					x = y;
-				}
-			}
-			return x;
-		}
-
-		static node_ptr decrement(node_ptr x)
-		{
-			if (x->color == RED && x->parent->parent == x)
-			{
-				x = x->right;
-			}
-			else if (!isTNULL(x->left))
-			{
-				node_ptr y = x->left;
-				while (!isTNULL(y->right))
-				{
-					y = y->right;
-				}
-				x = y;
-			}
-			else
-			{
-				node_ptr y = x->parent;
-				while (x == y->left)
-				{
-					x = y;
-					y = y->parent;
-				}
-				x = y;
-			}
 			return x;
 		}
 	};
 
-	template <typename Val,
-			  typename Compare = std::less<Val>,
-			  typename Alloc = std::allocator<Val> >
+	template <typename Key,
+			  typename Val,
+			  typename KeyOfValue,
+			  typename Compare = std::less<Key>,
+			  typename Alloc = std::allocator<Val>
+			  >
 	class rbtree
 	{
 	public:
 		// Member types
+		typedef Key key_type;
 		typedef Val value_type;
-		typedef Alloc allocator_type;
-		typedef Compare value_compare;
-
+		typedef Compare key_compare;
+		typedef std::size_t size_type;
 		typedef rbtree_node<value_type> node_type;
-		typedef std::allocator<node_type> node_allocator_type;
-		typedef typename ft::rbtree_node<value_type>::node_ptr node_ptr;
-		typedef typename ft::rbtree_node<value_type>::const_node_ptr const_node_ptr;
+		typedef typename node_type::node_allocator_type node_allocator_type;
+		typedef typename node_type::node_ptr node_ptr;
+		typedef typename node_type::const_node_ptr const_node_ptr;
 
 		// Member functions
-		// constructor
 		rbtree()
-			: _comp_val(value_compare())
+			: _size(0)
 		{
-			_TNULL = _node_alloc.allocate(1);
-			node_type tmp(value_type(), BLACK);
-			_node_alloc.construct(_TNULL, tmp);
-			_root = _TNULL;
+			_TNULL = _getnode(node_type(NULL, NULL, NULL, value_type(), BLACK));
+			_root = _getnode(node_type(NULL, _TNULL, _TNULL, value_type(), RED));
+			_TNULL->parent = _root;
 		}
 
-		// getRoot
 		const node_ptr &getRoot() const
 		{
 			return _root;
 		}
 
-		// insertNode
-		void insertNode(const value_type &data)
+		const node_ptr &getTNULL() const
 		{
-			node_ptr z = _getnode(NULL, data, RED);
-			node_ptr y = NULL;
-			node_ptr x = _root;
-
-			while (x != _TNULL)
-			{
-				y = x;
-				if (_comp_val(z->data, x->data)) // data < x->data
-				{
-					x = x->left;
-				}
-				else
-				{
-					x = x->right;
-				}
-			}
-
-			z->parent = y;
-			if (y == NULL)
-			{
-				_root = z;
-			}
-			else if (_comp_val(z->data, y->data))
-			{
-				y->left = z;
-			}
-			else
-			{
-				y->right = z;
-			}
-
-			if (z->parent == NULL)
-			{
-				z->color = BLACK;
-				return;
-			}
-
-			if (z->parent->parent == NULL)
-			{
-				return;
-			}
-
-			_insertFix(z);
+			return _TNULL;
 		}
 
-		// deleteNode
-		bool deleteNode(const value_type &data)
+		bool equal(const key_type &a, const key_type &b) const
 		{
-			node_ptr z = _searchKey(data);
-			node_ptr x, y;
-			// if key is not found
-			if (z == _TNULL)
+			return !_comp(a, b) && !_comp(b, a);
+		}
+
+		node_ptr searchKey(key_type key) const
+		{
+			node_ptr t = _root;
+
+			if (_root->color == RED)
 			{
-				return false;
+				return NULL;
 			}
-			// if key is exist
-			y = z;
-			int y_original_color = y->color;
-			if (z->left == _TNULL)
+			while (t != _TNULL && !equal(key, KeyOfValue()(t->data)))
 			{
-				x = z->right;
-				_rbTransplant(z, z->right);
-			}
-			else if (z->right == _TNULL)
-			{
-				x = z->left;
-				_rbTransplant(z, z->left);
-			}
-			else
-			{
-				y = minimum(z->right);
-				y_original_color = y->color;
-				x = y->right;
-				if (y->parent == z)
+				if (_comp(key, KeyOfValue()(t->data)))
 				{
-					x->parent = y;
+					t = t->left;
 				}
 				else
 				{
-					_rbTransplant(y, y->right);
-					y->right = z->right;
-					y->right->parent = y;
+					t = t->right;
 				}
-				_rbTransplant(z, y);
-				y->left = z->left;
-				y->left->parent = y;
-				y->color = z->color;
 			}
-			_node_alloc.deallocate(z);
-			if (y_original_color == BLACK)
+			if (t == _TNULL)
 			{
-				_deleteFix(x);
+				return NULL;
 			}
-			return true;
+			return t;
+		}
+
+		node_ptr rbInsert(const value_type &data)
+		{
+			++_size;
+			node_ptr ret = _insertNode(data);
+			_TNULL->parent = _root;
+			return ret;
+		}
+
+		void rbDelete(const node_ptr &z)
+		{
+			--_size;
+			_deleteNode(z);
+			if (_root == _TNULL)
+			{
+				_root = _getnode(node_type(NULL, _TNULL, _TNULL, value_type(), RED));
+			}
+			_TNULL->parent = _root;
+		}
+
+		void swap(rbtree &x)
+		{
+			ft::swap(_size, x._size);
+			ft::swap(_root, x._root);
+			ft::swap(_TNULL, x._TNULL);
+			ft::swap(_comp, x._comp);
+			ft::swap(_node_alloc, x._node_alloc);
+		}
+
+		size_type size() const
+		{
+			return _size;
 		}
 
 	private:
 		// Private member functions
-		node_ptr _getnode(node_ptr parent, const value_type &data, const int &color)
+		node_ptr _getnode(node_type tmp)
 		{
 			node_ptr ptr = _node_alloc.allocate(1);
-			node_type tmp(data, color);
-
-			tmp.parent = _TNULL;
-			tmp.left = _TNULL;
-			tmp.right = _TNULL;
 			_node_alloc.construct(ptr, tmp);
-
 			return ptr;
 		}
 
@@ -321,20 +239,80 @@ namespace ft
 			x->parent = y;
 		}
 
+		node_ptr _insertNode(const value_type &data)
+		{
+			node_ptr z = _getnode(node_type(NULL, _TNULL, _TNULL, data, RED));
+			node_ptr y = NULL;
+			node_ptr x = _root;
+
+			if (_root->color == RED)
+			{
+				_node_alloc.destroy(_root);
+				_node_alloc.deallocate(_root, 1);
+				_root = z;
+				_root->color = BLACK;
+				return z;
+			}
+
+			while (x != _TNULL)
+			{
+				y = x;
+				if (_comp(KeyOfValue()(z->data), KeyOfValue()(x->data))) // data < x->data
+				{
+					x = x->left;
+				}
+				else
+				{
+					x = x->right;
+				}
+			}
+
+			z->parent = y;
+
+			if (y == NULL)
+			{
+				_root = z;
+			}
+			else if (_comp(KeyOfValue()(z->data), KeyOfValue()(y->data)))
+			{
+				y->left = z;
+			}
+			else
+			{
+				y->right = z;
+			}
+
+			// if Z is root node
+			if (z->parent == NULL)
+			{
+				z->color = BLACK;
+				return z;
+			}
+
+			// if Z's parent is root node. No need fix up.
+			if (z->parent->parent == NULL)
+			{
+				return z;
+			}
+
+			_insertFix(z);
+			return z;
+		}
+
 		void _insertFix(node_ptr k)
 		{
-			// if parent is left child of grandparent, side is true else side is false
-			bool side = (k->parent == k->parent->parent->left);
-			// set uncle node
-			node_ptr u = side ? k->parent->parent->right : k->parent->parent->left;
-
 			while (k != _root && k->parent->color == RED)
 			{
+				// if parent is left child of grandparent, side is true else side is false
+				bool side = (k->parent == k->parent->parent->left);
+				// set uncle node
+				node_ptr u = side ? k->parent->parent->right : k->parent->parent->left;
+
 				if (u->color == RED)
 				{
 					// if uncle's color is RED -> recoloring
-					u->color = BLACK;
 					k->parent->color = BLACK;
+					u->color = BLACK;
 					k->parent->parent->color = RED;
 					k = k->parent->parent;
 				}
@@ -354,29 +332,6 @@ namespace ft
 			_root->color = BLACK;
 		}
 
-		bool _equal(const value_type &a, const value_type &b)
-		{
-			return !_comp_val(a, b) && !_comp_val(b, a);
-		}
-
-		node_ptr _searchKey(value_type data)
-		{
-			node_ptr t = _root;
-			
-			while (t != _TNULL && !_equal(data, t->data))
-			{
-				if (_comp_val(data, t->data))
-				{
-					t = t->left;
-				}
-				else
-				{
-					t = t->right;
-				}
-			}
-			return t;
-		}
-
 		void _rbTransplant(node_ptr u, node_ptr v)
 		{
 			if (u->parent == NULL)
@@ -394,15 +349,59 @@ namespace ft
 			v->parent = u->parent;
 		}
 
+		bool _deleteNode(const node_ptr &z)
+		{
+			node_ptr x, y;
+			y = z;
+			int y_original_color = y->color;
+			if (z->left == _TNULL)
+			{
+				x = z->right;
+				_rbTransplant(z, z->right);
+			}
+			else if (z->right == _TNULL)
+			{
+				x = z->left;
+				_rbTransplant(z, z->left);
+			}
+			else
+			{
+				y = node_type::minimum(z->right);
+				y_original_color = y->color;
+				x = y->right;
+				if (y->parent == z)
+				{
+					x->parent = y;
+				}
+				else
+				{
+					_rbTransplant(y, y->right);
+					y->right = z->right;
+					y->right->parent = y;
+				}
+				_rbTransplant(z, y);
+				y->left = z->left;
+				y->left->parent = y;
+				y->color = z->color;
+			}
+			_node_alloc.destroy(z);
+			_node_alloc.deallocate(z, 1);
+			if (y_original_color == BLACK)
+			{
+				_deleteFix(x);
+			}
+			return true;
+		}
+
 		void _deleteFix(node_ptr x)
 		{
-			// if x is left child, side is true else side is false
-			bool side = (x == x->parent->left);
-			// set sibling node
-			node_ptr s = side ? x->parent->right : x->parent->left;
-
 			while (x != _root && x->color == BLACK)
 			{
+				// if x is left child, side is true else side is false
+				bool side = (x == x->parent->left);
+				// set sibling node
+				node_ptr s = side ? x->parent->right : x->parent->left;
+
 				// case 1
 				if (s->color == RED)
 				{
@@ -440,9 +439,10 @@ namespace ft
 		}
 
 		// Member variables
+		size_type _size;
 		node_ptr _root;
 		node_ptr _TNULL;
-		value_compare _comp_val;
+		key_compare _comp;
 		node_allocator_type _node_alloc;
 	};
 } // namespace ft

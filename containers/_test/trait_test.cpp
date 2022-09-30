@@ -1,135 +1,94 @@
-#ifndef TYPE_TRAITS_HPP
-# define TYPE_TRAITS_HPP
-
-#include <cstdint>
-
-namespace ft
+namespace std
 {
-/**
- * @brief Enable type if condition is met
- * The type T is enabled as member type enable_if::type if bool is true.
- * Otherwise, enable_if::type is not defined.
- */
-template <bool, typename T = void>
-struct enable_if { };
 
-template <typename T>
-struct enable_if<true, T> { typedef T type; };
+/// pair holds two objects of arbitrary type.
+template <class _T1, class _T2>
+struct pair {
+  typedef _T1 first_type;    ///<  @c first_type is the first bound type
+  typedef _T2 second_type;   ///<  @c second_type is the second bound type
 
-template <bool B, typename T = void, typename U = void>
-struct conditional { };
-
-template <typename T, typename U>
-struct conditional<true, T, U> { typedef T type; };
-
-template <typename T, typename U>
-struct conditional<false, T, U> { typedef U type; };
-
-struct false_type {
-	typedef bool value_type;
-	typedef false_type type;
-	static const value_type value = false;
-};
-
-struct true_type {
-	typedef bool value_type;
-	typedef true_type type;
-	static const value_type value = true;
-};
-
-/**
- * @brief Trait class that identifies whether T is an integral type.
- */
-template <typename T>
-struct is_integral {
-	typedef false_type Integral;
-};
-
-template <>
-struct is_integral<bool> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<char> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<char16_t> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<char32_t> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<wchar_t> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<signed char> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<short int> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<int> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<long int> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<__int64_t> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<unsigned char> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<unsigned short int> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<unsigned int> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<unsigned long int> {
-	typedef true_type Integral;
-};
-
-template <>
-struct is_integral<__uint64_t> {
-	typedef true_type Integral;
-};
-} // namespace ft
-
+  _T1 first;                 ///< @c first is a copy of the first object
+  _T2 second;                ///< @c second is a copy of the second object
+#ifdef _GLIBCPP_RESOLVE_LIB_DEFECTS
+//265.  std::pair::pair() effects overly restrictive
+  /** The default constructor creates @c first and @c second using their
+   *  respective default constructors.  */
+  pair() : first(), second() {}
+#else
+  pair() : first(_T1()), second(_T2()) {}
 #endif
+  /** Two objects may be passed to a @c pair constructor to be copied.  */
+  pair(const _T1& __a, const _T2& __b) : first(__a), second(__b) {}
 
-_capacity = 0;
-for (InputIterator it = first; it != last; it++)
-{
-    _capacity++;
+  /** There is also a templated copy ctor for the @c pair class itself.  */
+  template <class _U1, class _U2>
+  pair(const pair<_U1, _U2>& __p) : first(__p.first), second(__p.second) {}
+};
+
+/// Two pairs of the same type are equal iff their members are equal.
+template <class _T1, class _T2>
+inline bool operator==(const pair<_T1, _T2>& __x, const pair<_T1, _T2>& __y)
+{ 
+  return __x.first == __y.first && __x.second == __y.second; 
 }
-_data = _allocator.allocate(_capacity);
-for (_size = 0; _size < _capacity; _size++)
-{
-    _allocator.construct(_data + _size, *first++);
+
+/// http://gcc.gnu.org/onlinedocs/libstdc++/20_util/howto.html#pairlt
+template <class _T1, class _T2>
+inline bool operator<(const pair<_T1, _T2>& __x, const pair<_T1, _T2>& __y)
+{ 
+  return __x.first < __y.first || 
+         (!(__y.first < __x.first) && __x.second < __y.second); 
 }
+
+/// Uses @c operator== to find the result.
+template <class _T1, class _T2>
+inline bool operator!=(const pair<_T1, _T2>& __x, const pair<_T1, _T2>& __y) {
+  return !(__x == __y);
+}
+
+/// Uses @c operator< to find the result.
+template <class _T1, class _T2>
+inline bool operator>(const pair<_T1, _T2>& __x, const pair<_T1, _T2>& __y) {
+  return __y < __x;
+}
+
+/// Uses @c operator< to find the result.
+template <class _T1, class _T2>
+inline bool operator<=(const pair<_T1, _T2>& __x, const pair<_T1, _T2>& __y) {
+  return !(__y < __x);
+}
+
+/// Uses @c operator< to find the result.
+template <class _T1, class _T2>
+inline bool operator>=(const pair<_T1, _T2>& __x, const pair<_T1, _T2>& __y) {
+  return !(__x < __y);
+}
+
+/**
+ *  @brief A convenience wrapper for creating a pair from two objects.
+ *  @param  x  The first object.
+ *  @param  y  The second object.
+ *  @return   A newly-constructed pair<> object of the appropriate type.
+ *
+ *  The standard requires that the objects be passed by reference-to-const,
+ *  but LWG issue #181 says they should be passed by const value.  We follow
+ *  the LWG by default.
+*/
+template <class _T1, class _T2>
+#ifdef _GLIBCPP_RESOLVE_LIB_DEFECTS
+//181.  make_pair() unintended behavior
+inline pair<_T1, _T2> make_pair(_T1 __x, _T2 __y)
+#else
+inline pair<_T1, _T2> make_pair(const _T1& __x, const _T2& __y)
+#endif
+{
+  return pair<_T1, _T2>(__x, __y);
+}
+
+} // namespace std
+
+#endif /* __GLIBCPP_INTERNAL_PAIR_H */
+
+// Local Variables:
+// mode:C++
+//
