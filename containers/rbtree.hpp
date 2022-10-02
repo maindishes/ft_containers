@@ -47,6 +47,8 @@
 #include <iostream>
 #include "type_trait.hpp"
 #include "pair.hpp"
+#include "rbtree_iterator.hpp"
+#include "reverse_iterator.hpp"
 
 
 namespace ft
@@ -159,13 +161,16 @@ namespace ft
             typedef Alloc                                                  allocator_type;
             typedef Compare                                                key_compare;
 
-            typedef rbtree_node<value_type>                                node_type;
+            typedef ft::rbtree_node<value_type>                            node_type;
             typedef typename node_type::node_allocator_type                node_allocator_type;
             typedef typename ft::rbtree_node<value_type>::node_ptr         node_ptr;
             typedef typename ft::rbtree_node<value_type>::const_node_ptr   const_node_ptr;
 
-            // Member variables
-
+            typedef ft::rbtree_iterator<node_ptr, value_type>					iterator;
+		    typedef ft::rbtree_const_iterator<const_node_ptr, value_type>		const_iterator;
+            typedef ft::reverse_iterator<iterator>								reverse_iterator;
+		    typedef ft::reverse_iterator<const_iterator>						const_reverse_iterator;
+        // Member variables
         private:
             node_allocator_type     _node_alloc;
             node_ptr                _root;
@@ -177,6 +182,7 @@ namespace ft
                 // rbtree val 은 mapped_type과  key_type을 pair 로 묶은 val 이다.
                 // std::less() 에서 () 연산자 가 val.first,(first로만) 로 값을 비교해준다.
         public:
+            // Constructor
             rbtree()
             :_node_cnt(0)
             {
@@ -188,13 +194,52 @@ namespace ft
 			{
 				return (!_comp(a,b) && !_comp(b,a));
 			}
-            
+            // Iterator
+                // begin
+            iterator begin()
+            {
+                node_ptr temp = ft::rbtree_node<value_type>::tree_minimum(this->get_root());
+                return (iterator(temp));
+            }
+            iterator begin() const
+            {
+                node_ptr temp = ft::rbtree_node<value_type>::tree_minimum(this->get_root());
+                return (const_iterator(temp));
+            }
+                // end
+            iterator end()
+            {
+                return iterator(this->getTNULL());
+            }
+            iterator end() const
+            {
+                return const_iterator(this->getTNULL());
+            }
             node_ptr _getnode(node_type temp)
             {
                 node_ptr ptr = _node_alloc.allocate(1);
                 _node_alloc.construct(ptr, tmep);
                 return ptr;
             }
+                // rbegin()
+            reverse_iterator rbegin() 
+            { 
+                return reverse_iterator(this->end()); 
+            }
+            const_reverse_iterator rbegin() const 
+            { 
+                return const_reverse_iterator(this->end()); 
+            }
+                // rend();
+            reverse_iterator rend() 
+            { 
+                return reverse_iterator(this->begin()); 
+            }
+            const_reverse_iterator rend() const 
+            {
+                return const_reverse_iterator(this->begin()); 
+            }
+
             
             node_ptr _find_key(key_type data)
             {
@@ -239,7 +284,7 @@ namespace ft
                 {
                     y = x;
                     // data < x->data
-                    if (_comp(z->data, x->data))
+                    if (_eomp(z->data, x->data))
                         x = x->_left;
                     else
                         x = x->_right;
@@ -248,7 +293,7 @@ namespace ft
                 z->_parent = y;
                 if (y == NULL)
                     _root = z;
-                else if (_comp(z->data, y->data))
+                else if (_eomp(z->data, y->data))
                     y->_left = z;
                 else
                     y->_right = z;
@@ -268,7 +313,7 @@ namespace ft
                 _delete_node(x);
                 if (_root == _TNULL)
                     _root = _getnode(node_type(NULL, _TNULL, _TNULL, value_type(), RED));
-                _TNULL->-parent = _root;
+                _TNULL->_parent = _root;
             }
 			// deleteNode
 			bool _delete_node(const value_type &data)
@@ -333,7 +378,11 @@ namespace ft
             
             size_type size() const
             {
-                return _size;
+                return _node_cnt;
+            }
+            size_type max_size() const
+            {
+                return (_node_alloc.max_size() < PTRDIFF_MAX) ? _node_alloc.max_size() : PTRDIFF_MAX;
             }
 
         private:
