@@ -119,25 +119,25 @@ namespace ft
                 else
                     return false;
             }
-            static node_ptr minimum(node_ptr x)
+            static node_ptr tree_minimum(node_ptr x)
             {
                 while (x->_left != NULL)
                     x = x->_left;
                 return x;
             }
-            static const_node_ptr minimum(const_node_ptr x)
+            static const_node_ptr tree_minimum(const_node_ptr x)
             {
                 while (x->_left != NULL)
                     x = x->_left;
                 return x;
             }
-            static node_ptr maximum(node_ptr x)
+            static node_ptr tree_maximum(node_ptr x)
             {
                 while (x->_right != NULL)
                     x = x->_right;
                 return x;
             }
-            static const_node_ptr maximum(const_node_ptr x)
+            static const_node_ptr tree_maximum(const_node_ptr x)
             {
                 while (x->_right != NULL)
                     x = x->_right;
@@ -165,6 +165,8 @@ namespace ft
             typedef typename ft::rbtree_node<value_type>::const_node_ptr   const_node_ptr;
 
             // Member variables
+
+        private:
             node_allocator_type     _node_alloc;
             node_ptr                _root;
             node_ptr                _TNULL;
@@ -172,16 +174,16 @@ namespace ft
             size_type               _node_cnt;
 
             // Member functions
-                // rb_tree val 은 mapped_type과  key_type을 pair 로 묶은 val 이다.
+                // rbtree val 은 mapped_type과  key_type을 pair 로 묶은 val 이다.
                 // std::less() 에서 () 연산자 가 val.first,(first로만) 로 값을 비교해준다.
-            rb_tree()
+        public:
+            rbtree()
             :_node_cnt(0)
             {
                 _TNULL = _getnode(node_type(NULL, NULL, NULL, value_type(), BLACK));
                 _root = _getnode(node_type(NULL, _TNULL, _TNULL, value_type(), RED));
                 _TNULL->_parent = _root;
             }
-            
             bool _equal(const value_type &a, const value_type &b)
 			{
 				return (!_comp(a,b) && !_comp(b,a));
@@ -198,14 +200,14 @@ namespace ft
             {
                 node_ptr temp = _root;
 
-                while (temp != _TNULL && !_eual(data, KeyOfValue()(temp->data)))
+                while (_root->_color != RED && temp != _TNULL && !_eual(data, KeyOfValue()(temp->data)))
                 {
                     if (_comp(data, KeyOfValue()(temp->data)))
 						temp = temp->_left;
 					else
 						temp = temp->_right;
                 }
-                if (temp == _TNULL)
+                if (temp == _TNULL || _root->_color == RED)
                     return NULL;
 				return temp;
             }
@@ -292,7 +294,7 @@ namespace ft
 				}
 				else
 				{
-					y = minimum(z->_right);
+					y = tree_minimum(z->_right);
 					y_original_color = y->_color;
 					x = y->_right;
 					if (y->_parent == z)
@@ -317,10 +319,8 @@ namespace ft
 				}
 				return true;
 			}
-
-        private:
-            // Private member functions
-               // get_root
+                        
+                // get_root
             const node_ptr &get_root() const
             {
                 return _root;
@@ -331,8 +331,15 @@ namespace ft
                 return _TNULL;
             }
             
+            size_type size() const
+            {
+                return _size;
+            }
 
-			// *Transplant => 삭제 시 이용하며, 삭제할 노드의 자식 노드를 부모노드에 연결해주는 함수
+        private:
+            // Private member functions
+
+			    // *Transplant => 삭제 시 이용하며, 삭제할 노드의 자식 노드를 부모노드에 연결해주는 함수
 			void _rb_transplant(node_ptr u, node_ptr v)
 			{
 				if (u->_parent == NULL)
@@ -378,7 +385,7 @@ namespace ft
                 x->_parent = y;
             
             /**
-             * @brief RB_tree_insert_rebalance
+             * @brief rbtree_insert_rebalance
              * RB-tree rebalance for insert new node
              * Case 1 -> Recoloring
              * Case 2 -> Restructuring
@@ -479,14 +486,14 @@ namespace ft
                         if (z->_right == NULL)
                             z._root->_left = z->_parent;
                         else
-                            z._root->_left = minimum(x);
+                            z._root->_left = tree_minimum(x);
                     }
                     if (z._root->_right == z)
                     {
                         if (z->_left == NULL)
                             z._root->_right = z->_parent;
                         else
-                            z._root->_right = minimum(x);
+                            z._root->_right = tree_minimum(x);
                     }
                 } // y now points to node to be actually deleted
                 if (y->_color != RED)
