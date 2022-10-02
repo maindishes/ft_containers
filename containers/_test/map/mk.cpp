@@ -183,7 +183,7 @@ namespace ft
 
 		/* Observers */
 
-		key_compare key_comp() const
+		key_compare key_comp() count
 		{ return key_compare(); }
 		value_compare value_comp() const
 		{ return this->_tree.value_comp(); }

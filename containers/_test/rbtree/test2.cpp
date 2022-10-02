@@ -177,7 +177,7 @@ public:
 	/** member variables **/
 	allocator_type	alloc;
 	key_comp		comp;
-	link_type		header;
+	link_type		header; // _root
 	size_type		node_cnt;
 
 	/** member functions **/
