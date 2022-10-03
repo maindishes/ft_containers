@@ -68,10 +68,21 @@ getYN () {
 	printf "${res}"
 }
 
+timeSafe () {
+	# 1=integer
+	res='';
+	res=$( echo "$2 * 20" | bc -l );
+	if [[ $1 < $res ]]; then
+		printf "OK"
+	else
+		printf "KO"
+	fi
+}
+
 printRes () {
 	# 1=file 2=compile 3=bin 4=output 5=std_compile
-	printf "%-35s: COMPILE: %s | RET: %s | OUT: %s | STD: [%s]\n" \
-		"$1" "$(getEmoji $2)" "$(getEmoji $3)" "$(getEmoji $4)" "$(getYN $5)"
+	printf "%-35s: COMPILE: %s | RET: %s | OUT: %s | STD: [%s] | FT_TIME: %.5fs | STD_TIME: %.5fs | TIME_SAFE: %s\n" \
+		"$1" "$(getEmoji $2)" "$(getEmoji $3)" "$(getEmoji $4)" "$(getYN $5)" "$6" "$7" "$(timeSafe $6 $7)"
 }
 
 # If diff_file empty, return 0 -> ok
@@ -123,10 +134,16 @@ cmp_one () {
 
 	> $ft_log; > $std_log;
 	if [ $ft_ret -eq 0 ]; then
+		start=$(perl -MTime::HiRes=time -e 'printf "%.5f\n", time')
 		./$ft_bin &>$ft_log; ft_ret=$?
+		finish=$(perl -MTime::HiRes=time -e 'printf "%.5f\n", time')
+		ft_time=$( echo "$finish - $start" | bc -l )
 	fi
 	if [ $std_ret -eq 0 ]; then
+		start=$(perl -MTime::HiRes=time -e 'printf "%.5f\n", time')
 		./$std_bin &>$std_log; std_ret=$?
+		finish=$(perl -MTime::HiRes=time -e 'printf "%.5f\n", time')
+		std_time=$( echo "$finish - $start" | bc -l )
 	fi
 	same_bin=$(isEq $ft_ret $std_ret)
 
@@ -134,7 +151,7 @@ cmp_one () {
 	compare_output $diff_file
 	same_output=$?
 
-	printRes "$container/$file" $same_compilation $same_bin $same_output $std_compile
+	printRes "$container/$file" $same_compilation $same_bin $same_output $std_compile $ft_time $std_time
 	clean_trailing_files
 }
 
