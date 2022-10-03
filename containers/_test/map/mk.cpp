@@ -1,7 +1,7 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include "RBTree.hpp"
+// #include "RBTree.hpp"
 
 namespace ft
 {
@@ -14,7 +14,7 @@ namespace ft
      * @tparam std::allocator<ft::pair<const Key, T> > 
      */
 	template <typename Key, typename T, typename Compare = std::less<Key>,
-				typename Alloc = std::allocator<ft::pair<const Key, T> > >
+				typename Alloc = std:value_comp:allocator<ft::pair<const Key, T> > >
 	class map
 	{
 /*

@@ -7,10 +7,10 @@
 #ifndef MAP_HPP
 # define MAP_HPP
 
-#include <memory>		// allocator
-#include <functional>	// less
-#include "utility.hpp"	// pair
-#include "tree.hpp"		// tree
+// #include <memory>		// allocator
+// #include <functional>	// less
+// #include "utility.hpp"	// pair
+// #include "tree.hpp"		// tree
 
 namespace ft
 {
