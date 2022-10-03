@@ -9,6 +9,7 @@
 #include "rbtree.hpp"
 #include <cstddef>
 #include <iostream>
+#include "algorithm.hpp"
 
 namespace ft
 {
@@ -303,6 +304,57 @@ namespace ft
             ft::pair<const_iterator,const_iterator>equal_range (const key_type& k)
             {
                 return ft::make_pair(lower_bound(k),upper_bound(k));
+            }
+
+            // Allocator
+            allocator_type get_allocator() const
+            {
+                // return allocator_type();
+                return this->_tree.get_allocator();
+            }
+
+            // Non-member functions
+                // Relational operators
+           	template <typename Key, typename T, typename Compare, typename Alloc>
+            inline bool operator==(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
+            { 
+                return lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()); 
+            }
+
+            template <typename Key, typename T, typename Compare, typename Alloc>
+            inline bool operator!=(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
+            { 
+                return !(lhs == rhs); 
+            }
+
+            template <typename Key, typename T, typename Compare, typename Alloc>
+            inline bool operator<(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
+            { 
+                return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()); 
+            }
+
+            template <typename Key, typename T, typename Compare, typename Alloc>
+            inline bool operator>(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
+            { 
+                return rhs < lhs; 
+            }
+
+            template <typename Key, typename T, typename Compare, typename Alloc>
+            inline bool operator<=(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
+            { 
+                return !(rhs < lhs); 
+            }
+
+            template <typename Key, typename T, typename Compare, typename Alloc>
+            inline bool operator>=(const map<Key, T, Compare, Alloc> &lhs, const map<Key, T, Compare, Alloc> &rhs)
+            { 
+                return !(lhs < rhs); 
+            }
+
+            template <typename Key, typename T, typename Compare, typename Alloc>
+            void swap(map<Key, T, Compare, Alloc>& x, map<Key, T, Compare, Alloc>& y)
+            { 
+                x.swap(y); 
             }
 
     };
