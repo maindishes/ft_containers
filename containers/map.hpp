@@ -286,16 +286,37 @@ namespace ft
                 }
                 return n;
             }
-
+                    // std::less::operator() lhs < rhs 이면 true , 그렇지 않으면 false 입니다.
                 //lower_bound
             iterator lower_bound (const key_type& k)
             {
-                ;
+                iterator it = this->begin();
+                while(key_comp()(it->first, k) && it != this->end())
+                    ++it;
+                return it;
             }
-            const_iterator lower_bound (const key_type& k) const;
+            const_iterator lower_bound (const key_type& k) const
+            {
+                const_iterator it = this->begin();
+                while(key_comp()(it->first, k) && it != this->end())
+                    ++it;
+                return it;
+            }
                 // upper_bound
-            iterator upper_bound (const key_type& k);
-            const_iterator upper_bound (const key_type& k) const;
+            iterator upper_bound (const key_type& k)
+            {
+               iterator it = this->begin();
+                while(key_comp()(k, it->first) && it != this->end())
+                    ++it;
+                return it;
+            }
+            const_iterator upper_bound (const key_type& k) const
+            {
+                const_iterator it = this->begin();
+                while(key_comp()(k, it->first) && it != this->end())
+                    ++it;
+                return it;
+            }
                 // equal_range
             ft::pair<iterator,iterator> equal_range (const key_type& k) const
             {
