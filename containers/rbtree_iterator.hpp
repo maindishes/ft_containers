@@ -1,9 +1,10 @@
 #ifndef RBTREE_ITERATOR_HPP
 #define RBTREE_ITERATOR_HPP
 
-#include "rbtree.hpp"
-#include "iterator_base.hpp"
-#include <cstddef> // std::ptrdiff_t
+// #include "iterator_base.hpp"
+// #include "rbtree.hpp"
+// #include <cstddef> // std::ptrdiff_t
+
 
 namespace ft
 {
@@ -12,6 +13,7 @@ namespace ft
     {
         typedef ft::bidirectional_iterator_tag iterator_category;
         typedef std::ptrdiff_t                      difference_type;
+        typedef ft::rbtree_iterator<T> _Self;
         typedef ft::rbtree_node<T> node_type;
         typedef typename node_type::node_ptr node_ptr;
 
@@ -37,12 +39,12 @@ namespace ft
         {}
 
         template <class U>      // copy assignment
-        rbtree_iterator &operator=(const rbtree_iterator<U> &x)
+        _Self &operator=(const rbtree_iterator<U> &x)
         {
             _node = x._node;
             return *this;
         }
-        rbtree_iterator &operator=(const node_ptr& p)
+        _Self &operator=(const node_ptr& p)
         {
             _node= p;
             return *this;
@@ -89,15 +91,15 @@ namespace ft
             }
         }
 
-        rbtree_iterator &operator++()
+        _Self &operator++()
         {
             increment();
             return *this;
         }
 
-        rbtree_iterator operator++(int)
+        _Self operator++(int)
         {
-            rbtree_iterator temp = *this;
+            _Self temp = *this;
             increment();
             return temp;
         }
@@ -125,14 +127,14 @@ namespace ft
                 _node =p;
             }
         }
-        rbtree_iterator &operator--()
+        _Self &operator--()
         {
             decrement();
             return *this;
         }
-        rbtree_iterator operator--(int)
+        _Self operator--(int)
         {
-            rbtree_iterator temp = *this;
+            _Self temp = *this;
             decrement();
             return *this;
         }
@@ -161,7 +163,8 @@ namespace ft
     class rbtree_const_iterator
     {
         typedef ft::bidirectional_iterator_tag iterator_category;
-        typedef std::ptrdiff_t                      difference_type;
+        typedef std::ptrdiff_t                     difference_type;
+        typedef rbtree_const_iterator<T> _Self;
         typedef ft::rbtree_node<T> node_type;
         typedef typename node_type::const_node_ptr node_ptr;
 
@@ -187,13 +190,14 @@ namespace ft
         {}
 
         template <class U>      // copy assignment
-        rbtree_const_iterator &operator=(const rbtree_const_iterator<U> &x)
+        _Self &operator=(const rbtree_const_iterator<U> &x)
         {
             if (this!= &x)
                 _node = x._node;
             return *this;
         }
-        rbtree_const_iterator& operator=(const const_node_ptr& it)
+        template <typename U>
+        _Self& operator=(const rbtree_iteraotr<U>& it)
         {
             _node = p;
             return *this;
@@ -239,13 +243,13 @@ namespace ft
             }
         }
 
-        rbtree_const_iterator &operator++()
+        _Self &operator++()
         {
             increment();
             return *this;
         }
 
-        rbtree_const_iterator operator++(int)
+        _Self operator++(int)
         {
             rbtree_const_iterator temp = *this;
             increment();

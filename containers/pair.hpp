@@ -6,18 +6,18 @@ namespace ft
     struct pair
     {
         // Member types
-        typedef T1 first_type;
-        typedef T2 second_type;
+        typedef T1 first_type;   
+        typedef T2 second_type;  
 
         // Member variables
-        T1 first;
-        T2 second;
+        first_type first;
+        second_type second;
 
         // Member functions
             // constructor
             //  default (1)
         pair()
-        :first(T1()), second(T2()) {}
+        :first(), second() {}
             // copy (2)	
         template<class U, class V> 
         pair (const pair<U,V>& pr)

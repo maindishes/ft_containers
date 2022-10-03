@@ -2,6 +2,7 @@
 #define TYPE_TRAIT_HPP
 
 # include <cstdint>
+# include <cstddef>
 namespace ft
 {
     // enable_if 
