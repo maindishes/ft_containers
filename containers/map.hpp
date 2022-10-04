@@ -5,7 +5,7 @@
 #include <functional>
 #include "pair.hpp"
 #include "reverse_iterator.hpp"
-// #include "rbtree_iterator.hpp"
+#include "rbtree_iterator.hpp"
 #include "rbtree.hpp"
 #include <cstddef>
 #include <iostream>
@@ -194,7 +194,7 @@ namespace ft
             // Modifiers:
                 // insert
                     //single element (1)	
-            ft::pair<iterator,bool> insert (const value_type& val)
+            ft::pair<iterator,bool> insert(const value_type& val)
             {
                 node_ptr temp = _tree._find_key(val.first);
                 if (temp)
@@ -213,10 +213,10 @@ namespace ft
             }
                     //range (3)	
             template <class InputIterator>
-            void insert (InputIterator first, InputIterator last)
+            void insert (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last)
             {
                 for (; first != last; first++)
-				this->insert(*first);
+				    this->insert(*first);
             }
                 // erase
                     // (1)	
@@ -339,9 +339,10 @@ namespace ft
                 return it;
             }
                 // equal_range
-            ft::pair<iterator,iterator> equal_range (const key_type& k) const
+            ft::pair<iterator,iterator>equal_range (const key_type& k) const
             {
-                return ft::pair<iterator,iterator>(lower_bound(k),upper_bound(k));
+                // return ft::pair<iterator,iterator>(lower_bound(k),upper_bound(k));
+                return ft::make_pair(lower_bound(k),upper_bound(k));
             }
             ft::pair<const_iterator,const_iterator>equal_range (const key_type& k)
             {

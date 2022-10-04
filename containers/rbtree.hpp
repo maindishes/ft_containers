@@ -4,8 +4,8 @@
 #include <functional> // std::less
 #include <iostream>
 #include "type_trait.hpp"
-// #include "pair.hpp"
-// #include "rbtree_iterator.hpp"
+#include "pair.hpp"
+#include "rbtree_iterator.hpp"
 #include "reverse_iterator.hpp"
 #include "iterator_base.hpp"
 #include "algorithm.hpp"
@@ -13,17 +13,18 @@
 
 
 namespace ft
-{
+{   
+    // Red-Black Tree Node
     enum node_color
     {
         RED,
         BLACK
-    };
-    // Red-Black Tree Node
+    };    
 
     template <typename T> 
     struct rbtree_node
     {
+        
         public :
             // Member types
             typedef T   value_type;
@@ -31,7 +32,7 @@ namespace ft
             typedef std::allocator<node_type> node_allocator_type;
             typedef node_type *node_ptr;
             typedef const node_type *const_node_ptr;
-            
+
             value_type _data;
             // color_type  _color;
             int         _color;
@@ -109,322 +110,322 @@ namespace ft
 
     };
 
-    template<typename T>
-    class rbtree_iterator
-    {
-        public:
-            typedef ft::bidirectional_iterator_tag iterator_category;
-            typedef std::ptrdiff_t                      difference_type;
-            typedef ft::rbtree_iterator<T> _Self;
-            typedef ft::rbtree_node<T> node_type;
-            typedef typename node_type::node_ptr node_ptr;
+    // template<typename T>
+    // class rbtree_iterator
+    // {
+    //     public:
+    //         typedef ft::bidirectional_iterator_tag iterator_category;
+    //         typedef std::ptrdiff_t                      difference_type;
+    //         typedef ft::rbtree_iterator<T> _Self;
+    //         typedef ft::rbtree_node<T> node_type;
+    //         typedef typename node_type::node_ptr node_ptr;
 
-            typedef T   value_type;
-            typedef T   *pointer;
-            typedef T   &reference;
-        // Member variables
-        private:
-            node_ptr    _node;
+    //         typedef T   value_type;
+    //         typedef T   *pointer;
+    //         typedef T   &reference;
+    //     // Member variables
+    //     private:
+    //         node_ptr    _node;
 
-        // Member functions
-        public:
-            rbtree_iterator()
-            : _node(NULL) 
-            {}
+    //     // Member functions
+    //     public:
+    //         rbtree_iterator()
+    //         : _node(NULL) 
+    //         {}
 
-            explicit rbtree_iterator(const node_ptr &x)
-            : _node(x)
-            {}
+    //         explicit rbtree_iterator(const node_ptr &x)
+    //         : _node(x)
+    //         {}
 
-            template <class U>    // copy
-            rbtree_iterator(const rbtree_iterator<U> &x)
-            : _node(x._node)
-            {}
+    //         template <class U>    // copy
+    //         rbtree_iterator(const rbtree_iterator<U> &x)
+    //         : _node(x._node)
+    //         {}
 
-            template <class U>      // copy assignment
-            _Self &operator=(const rbtree_iterator<U> &x)
-            {
-                _node = x._node;
-                return *this;
-            }
-            _Self &operator=(const node_ptr& p)
-            {
-                _node= p;
-                return *this;
-            }
+    //         template <class U>      // copy assignment
+    //         _Self &operator=(const rbtree_iterator<U> &x)
+    //         {
+    //             _node = x._node;
+    //             return *this;
+    //         }
+    //         _Self &operator=(const node_ptr& p)
+    //         {
+    //             _node= p;
+    //             return *this;
+    //         }
 
-            virtual ~rbtree_iterator() {}
+    //         virtual ~rbtree_iterator() {}
 
-            //
-            reference operator*() const
-            {
-                return _node->data;
-            }
-            pointer operator->() const
-            {
-                return &(_node->data);
-            }
-            // bool operator==(const rbtree_iteraotr &x)
-            // {
-            //     return (_node == x._node);
-            // }
-            // bool operator!=(const rbtree_iterator &x)
-            // {
-            //     return (_node != x._node);
-            // }
-            // operation++
-            void increment()
-            {
-                if (_node->_right != NULL)
-                {
-                    _node = _node->_right;
-                    while (_node->_left != NULL)
-                        _node = _node->_left;
-                }
-                else
-                {
-                    node_ptr p = _node->_parent;
-                    while (_node == p->_right)
-                    {
-                        _node =p;
-                        p = p->_parent;
-                    }
-                    if (_node->_right != p)
-                        _node = p;
-                }
-            }
+    //         //
+    //         reference operator*() const
+    //         {
+    //             return _node->data;
+    //         }
+    //         pointer operator->() const
+    //         {
+    //             return &(_node->data);
+    //         }
+    //         // bool operator==(const rbtree_iteraotr &x)
+    //         // {
+    //         //     return (_node == x._node);
+    //         // }
+    //         // bool operator!=(const rbtree_iterator &x)
+    //         // {
+    //         //     return (_node != x._node);
+    //         // }
+    //         // operation++
+    //         void increment()
+    //         {
+    //             if (_node->_right != NULL)
+    //             {
+    //                 _node = _node->_right;
+    //                 while (_node->_left != NULL)
+    //                     _node = _node->_left;
+    //             }
+    //             else
+    //             {
+    //                 node_ptr p = _node->_parent;
+    //                 while (_node == p->_right)
+    //                 {
+    //                     _node =p;
+    //                     p = p->_parent;
+    //                 }
+    //                 if (_node->_right != p)
+    //                     _node = p;
+    //             }
+    //         }
 
-            _Self &operator++()
-            {
-                increment();
-                return *this;
-            }
+    //         _Self &operator++()
+    //         {
+    //             increment();
+    //             return *this;
+    //         }
 
-            _Self operator++(int)
-            {
-                _Self temp = *this;
-                increment();
-                return temp;
-            }
-            // operation--
-            void decrement()
-            {
-                // case header
-                if (_node->_color == RED && _node->_parent->_parent == _node)
-                    _node = _node->_right;
-                else if (_node->_left != NULL)
-                {
-                    node_ptr y = _node->_left;
-                    while (y->_right != NULL)
-                        y = y->_right;
-                    _node = y;
-                }
-                else 
-                {
-                    node_ptr p = _node->_parent;
-                    while (_node == p->_left)
-                    {
-                        _node = p;
-                        p = p->_parent;
-                    }
-                    _node =p;
-                }
-            }
-            _Self &operator--()
-            {
-                decrement();
-                return *this;
-            }
-            _Self operator--(int)
-            {
-                _Self temp = *this;
-                decrement();
-                return *this;
-            }
+    //         _Self operator++(int)
+    //         {
+    //             _Self temp = *this;
+    //             increment();
+    //             return temp;
+    //         }
+    //         // operation--
+    //         void decrement()
+    //         {
+    //             // case header
+    //             if (_node->_color == RED && _node->_parent->_parent == _node)
+    //                 _node = _node->_right;
+    //             else if (_node->_left != NULL)
+    //             {
+    //                 node_ptr y = _node->_left;
+    //                 while (y->_right != NULL)
+    //                     y = y->_right;
+    //                 _node = y;
+    //             }
+    //             else 
+    //             {
+    //                 node_ptr p = _node->_parent;
+    //                 while (_node == p->_left)
+    //                 {
+    //                     _node = p;
+    //                     p = p->_parent;
+    //                 }
+    //                 _node =p;
+    //             }
+    //         }
+    //         _Self &operator--()
+    //         {
+    //             decrement();
+    //             return *this;
+    //         }
+    //         _Self operator--(int)
+    //         {
+    //             _Self temp = *this;
+    //             decrement();
+    //             return *this;
+    //         }
             
-            node_ptr base() const
-            {
-                return _node;
-            }
-    };
-    template <typename Value>
-    bool operator==(const rbtree_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
-    {
-        return (rhs.base() == lhs.base());
-    }
+    //         node_ptr base() const
+    //         {
+    //             return _node;
+    //         }
+    // };
+    // template <typename Value>
+    // bool operator==(const rbtree_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
+    // {
+    //     return (rhs.base() == lhs.base());
+    // }
 
-    template <typename Value>
-    bool operator!=(const rbtree_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
-    {
-        return (lhs.base() == rhs.base());
-    }
+    // template <typename Value>
+    // bool operator!=(const rbtree_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
+    // {
+    //     return (lhs.base() == rhs.base());
+    // }
 
 
 
-    //rbtree_const_iterator
-    template<class T>
-    class rbtree_const_iterator
-    {
-    public:
-        typedef ft::bidirectional_iterator_tag iterator_category;
-        typedef std::ptrdiff_t                     difference_type;
-        typedef rbtree_const_iterator<T> _Self;
-        typedef ft::rbtree_node<T> node_type;
-        typedef typename node_type::const_node_ptr node_ptr;
+    // //rbtree_const_iterator
+    // template<class T>
+    // class rbtree_const_iterator
+    // {
+    // public:
+    //     typedef ft::bidirectional_iterator_tag iterator_category;
+    //     typedef std::ptrdiff_t                     difference_type;
+    //     typedef rbtree_const_iterator<T> _Self;
+    //     typedef ft::rbtree_node<T> node_type;
+    //     typedef typename node_type::const_node_ptr node_ptr;
 
-        typedef T   value_type;
-        typedef const T   *pointer;
-        typedef const T   &reference;
+    //     typedef T   value_type;
+    //     typedef const T   *pointer;
+    //     typedef const T   &reference;
         
-        // Member variables
-    private:
-        node_ptr    _node;
+    //     // Member variables
+    // private:
+    //     node_ptr    _node;
 
-        // Member functions
-    public:
-        rbtree_const_iterator()
-        : _node(NULL) 
-        {}
+    //     // Member functions
+    // public:
+    //     rbtree_const_iterator()
+    //     : _node(NULL) 
+    //     {}
 
-        explicit rbtree_const_iterator(node_ptr x)
-        : _node(x)
-        {}
+    //     explicit rbtree_const_iterator(node_ptr x)
+    //     : _node(x)
+    //     {}
 
-        template <class U>    // copy
-        rbtree_const_iterator(const rbtree_const_iterator<U> &x)
-        : _node(x._node)
-        {}
+    //     template <class U>    // copy
+    //     rbtree_const_iterator(const rbtree_const_iterator<U> &x)
+    //     : _node(x._node)
+    //     {}
 
-        template <class U>      // copy assignment
-        _Self &operator=(const rbtree_const_iterator<U> &x)
-        {
-            if (this!= &x)
-                _node = x._node;
-            return *this;
-        }
-        template <typename U>
-        _Self& operator=(const rbtree_iterator<U>& it)
-        {
-            _node = it;
-            return *this;
-        }
-        virtual ~rbtree_const_iterator() {}
+    //     template <class U>      // copy assignment
+    //     _Self &operator=(const rbtree_const_iterator<U> &x)
+    //     {
+    //         if (this!= &x)
+    //             _node = x._node;
+    //         return *this;
+    //     }
+    //     template <typename U>
+    //     _Self& operator=(const rbtree_iterator<U>& it)
+    //     {
+    //         _node = it;
+    //         return *this;
+    //     }
+    //     virtual ~rbtree_const_iterator() {}
 
-        //
-        reference operator*() const
-        {
-            return _node->data;
-        }
-        pointer operator->() const
-        {
-            return &(_node->data);
-        }
-        // bool operator==(const rbtree_iteraotr &x)
-        // {
-        //     return (_node == x._node);
-        // }
-        // bool operator!=(const rbtree_const_iterator &x)
-        // {
-        //     return (_node != x._node);
-        // }
-        // operation++
-        void increment()
-        {
-            if (_node->_right != NULL)
-            {
-                _node = _node->_right;
-                while (_node->_left != NULL)
-                    _node = _node->_left;
-            }
-            else
-            {
-                node_ptr p = _node->_parent;
-                while (_node == p->_right)
-                {
-                    _node =p;
-                    p = p->_parent;
-                }
-                if (_node->_right != p)
-                    _node = p;
-            }
-        }
+    //     //
+    //     reference operator*() const
+    //     {
+    //         return _node->data;
+    //     }
+    //     pointer operator->() const
+    //     {
+    //         return &(_node->data);
+    //     }
+    //     // bool operator==(const rbtree_iteraotr &x)
+    //     // {
+    //     //     return (_node == x._node);
+    //     // }
+    //     // bool operator!=(const rbtree_const_iterator &x)
+    //     // {
+    //     //     return (_node != x._node);
+    //     // }
+    //     // operation++
+    //     void increment()
+    //     {
+    //         if (_node->_right != NULL)
+    //         {
+    //             _node = _node->_right;
+    //             while (_node->_left != NULL)
+    //                 _node = _node->_left;
+    //         }
+    //         else
+    //         {
+    //             node_ptr p = _node->_parent;
+    //             while (_node == p->_right)
+    //             {
+    //                 _node =p;
+    //                 p = p->_parent;
+    //             }
+    //             if (_node->_right != p)
+    //                 _node = p;
+    //         }
+    //     }
 
-        _Self &operator++()
-        {
-            increment();
-            return *this;
-        }
+    //     _Self &operator++()
+    //     {
+    //         increment();
+    //         return *this;
+    //     }
 
-        _Self operator++(int)
-        {
-            rbtree_const_iterator temp = *this;
-            increment();
-            return temp;
-        }
-        // operation--
-        void decrement()
-        {
-            // case header
-            if (_node->_color == RED && _node->_parent->_parent == _node)
-                _node = _node->_right;
-            else if (_node->_left != NULL)
-            {
-                node_ptr y = _node->_left;
-                while (y->_right != NULL)
-                    y = y->_right;
-                _node = y;
-            }
-            else 
-            {
-                node_ptr p = _node->_parent;
-                while (_node == p->_left)
-                {
-                    _node = p;
-                    p = p->_parent;
-                }
-                _node =p;
-            }
-        }
-        rbtree_const_iterator &operator--()
-        {
-            decrement();
-            return *this;
-        }
-        rbtree_const_iterator operator--(int)
-        {
-            rbtree_const_iterator temp = *this;
-            decrement();
-            return *this;
-        }
-        node_ptr base() const
-        {
-            return _node;
-        }
-    };
+    //     _Self operator++(int)
+    //     {
+    //         rbtree_const_iterator temp = *this;
+    //         increment();
+    //         return temp;
+    //     }
+    //     // operation--
+    //     void decrement()
+    //     {
+    //         // case header
+    //         if (_node->_color == RED && _node->_parent->_parent == _node)
+    //             _node = _node->_right;
+    //         else if (_node->_left != NULL)
+    //         {
+    //             node_ptr y = _node->_left;
+    //             while (y->_right != NULL)
+    //                 y = y->_right;
+    //             _node = y;
+    //         }
+    //         else 
+    //         {
+    //             node_ptr p = _node->_parent;
+    //             while (_node == p->_left)
+    //             {
+    //                 _node = p;
+    //                 p = p->_parent;
+    //             }
+    //             _node =p;
+    //         }
+    //     }
+    //     rbtree_const_iterator &operator--()
+    //     {
+    //         decrement();
+    //         return *this;
+    //     }
+    //     rbtree_const_iterator operator--(int)
+    //     {
+    //         rbtree_const_iterator temp = *this;
+    //         decrement();
+    //         return *this;
+    //     }
+    //     node_ptr base() const
+    //     {
+    //         return _node;
+    //     }
+    // };
 
-    template <typename Value>
-    bool operator==(const rbtree_const_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
-    {
-        return (rhs.base() == lhs.base());
-    }
+    // template <typename Value>
+    // bool operator==(const rbtree_const_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
+    // {
+    //     return (rhs.base() == lhs.base());
+    // }
 
-    template <typename Value>
-    bool operator!=(const rbtree_const_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
-    {
-        return (lhs.base() != rhs.base());
-    }
+    // template <typename Value>
+    // bool operator!=(const rbtree_const_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
+    // {
+    //     return (lhs.base() != rhs.base());
+    // }
 
-    template <typename Value>
-    bool operator==(const rbtree_const_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
-    {
-        return (rhs.base() == lhs.base());
-    }
+    // template <typename Value>
+    // bool operator==(const rbtree_const_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
+    // {
+    //     return (rhs.base() == lhs.base());
+    // }
 
-    template <typename Value>
-    bool operator!=(const rbtree_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
-    {
-        return (lhs.base() != rhs.base());
-    }
+    // template <typename Value>
+    // bool operator!=(const rbtree_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
+    // {
+    //     return (lhs.base() != rhs.base());
+    // }
 
 
     // rbtree;
@@ -485,7 +486,7 @@ namespace ft
                 node_ptr temp = ft::rbtree_node<value_type>::tree_minimum(this->get_root());
                 return (iterator(temp));
             }
-            iterator begin() const
+            const_iterator begin() const
             {
                 node_ptr temp = ft::rbtree_node<value_type>::tree_minimum(this->get_root());
                 return (const_iterator(temp));
@@ -493,11 +494,13 @@ namespace ft
                 // end
             iterator end()
             {
-                return iterator(this->getTNULL());
+                // return iterator(this->getTNULL());
+                return iterator(this->_TNULL);
             }
-            iterator end() const
+            const_iterator end() const
             {
-                return const_iterator(this->getTNULL());
+                // return const_iterator(this->getTNULL());
+                return const_iterator(this->_TNULL);
             }
             node_ptr _getnode(node_type temp)
             {
@@ -602,16 +605,10 @@ namespace ft
                 _TNULL->_parent = _root;
             }
 			// deleteNode
-			bool _delete_node(const node_ptr &data)
+			bool _delete_node(const node_ptr &z)
 			{
-				node_ptr z = _find_key(data);
 				node_ptr x, y;
-				// if key is not find
-				if (z == _TNULL)
-					return false;
-
-				// if key is exist
-				y = z;
+                y = z;
 				int y_original_color = y->_color;
 				if (z->_left == _TNULL)
 				{
@@ -625,7 +622,7 @@ namespace ft
 				}
 				else
 				{
-					y = tree_minimum(z->_right);
+					y = node_type::tree_minimum(z->_right);
 					y_original_color = y->_color;
 					x = y->_right;
 					if (y->_parent == z)
@@ -641,13 +638,10 @@ namespace ft
 					y->_left->_parent = y;
 					y->_color = z->_color;
 				}
-				_node_alloc.deallocate(z);
+                _node_alloc.destroy(z);
+				_node_alloc.deallocate(z, 1);
 				if (y_original_color == BLACK)
-				{
-					node_ptr temp = _delete_fix(x);
-					_node_alloc.destroy(temp);
-					_node_alloc.deallocate(temp);
-				}
+					_delete_fix(x);
 				return true;
 			}
                         
@@ -682,7 +676,7 @@ namespace ft
 					u->_parent->_left = v;
 				else
 					u->_parent->_right = v;
-				v->_parent = u->_parnet;
+				v->_parent = u->_parent;
 			}
 
             void _left_rotate(node_ptr x)
@@ -767,163 +761,205 @@ namespace ft
             // link_type &root() const { return header->parent; }
             // link_type &leftmost()  const { return header->left; }
             // link_type &rightmost() const { return header->right; }
-            node_ptr _delete_fix(node_ptr z)
+            void _delete_fix(node_ptr x)
             {
-                node_ptr y = z;
-                node_ptr x = NULL;
-                node_ptr x_parent = NULL;
+            //     node_ptr y = z;
+            //     node_ptr x = NULL;
+            //     node_ptr x_parent = NULL;
 
-                if (y->_left == NULL)
-                    x = y->_right; // 자식 노드가 1개인 경우, 후계 노드는 y의 오른쪽 노드
-                else
-                {
-                    if (y->_right == NULL)
-                        x = y->_left; // 자식 노드가 1개인 경우, 후계 노드는 y의 왼쪽노드
-                    else // 자식 노드가 2개인 경우
-                    {
-                        y = y->_right;
-                        while (y->_left != NULL)
-                            y = y->_left; // y => Successor
-                        x = y->_right; // x => Succexssor 의 유일한 자식노드
-                    }
-                }
-                if (y != z) // 자식 노드가 2개인 경우
-                {
-                    // y : successor
-                    // z : 삭제할 노드 
-                    // x : sucessor 의 자식 노드
-                    z->_left->_parnet = y;
-                    y->_left = z->_left;
-                    if (y != z->_right)
-                    {
-                        x_parent = y->_parent;
-                        if (x)
-                            x->_parent = y->_parent;
-                        y->_parent->_left = x;
-                        y->_right = z->_right;
-                        z->_right->_parent = y;
-                    }
-                    else
-                    {
-                     // Successor 가 삭제하려는 노드 바로 오른쪽 자식일때
-                        x_parent = y;
-                    }
-                    if (z._root == z)
-                        z._root = x;
-                    else
-                    {
-                        if (z->_parent->_left == z)
-                            z->_parent->_left = x;
-                        else
-                            z->_parent->_right = x;
-                    }
-                    if (z._root->_left == z)
-                    {
-                        if (z->_right == NULL)
-                            z._root->_left = z->_parent;
-                        else
-                            z._root->_left = tree_minimum(x);
-                    }
-                    if (z._root->_right == z)
-                    {
-                        if (z->_left == NULL)
-                            z._root->_right = z->_parent;
-                        else
-                            z._root->_right = tree_minimum(x);
-                    }
-                } 
-                // y now points to node to be actually deleted
-                if (y->_color != RED)
-                { 
-                    // RED => 그냥 삭제
-                    while( x!= z._root && (x == NULL || x->_color == BLACK)) // y가 BLACK이고, x가 BLACK인 경우 문제 발생
-                    {
-                        if (x == x_parent->_left)
-                        {
-                            node_ptr s = x_parent->_right;
-                            if(s->_color == RED)
-                            {
-                                // case 2-4 (s가 RED인 경우는 이 경우 밖에 없다.)
-                                s->_color = BLACK;
-                                x_parent->_color = RED;
-                                _rotate_left(x_parent);
-                                s = x_parent->_right;
-                            }
-                            //s is always BLACK
-                            if ((s->_left == NULL) || (s->_left->_color == BLACK && (s->_right == NULL || s->_right->color == BLACK))) 
-                            { 
-                                // Case 1-1) && 2-1))
-                                s->_color = RED;
-                                x = x_parent;
-                                x_parent = x_parent->_parent;
-                            }
-                            else
-                            {
-                                if(s->_right == NULL || s->_right->_color == BLACK)
-                                { // Case *-3
-                                    if (s->_left)
-                                        s->_left->_color = BLACK;
-                                    s->_color = RED;
-                                    _rotate_right(s);
-                                    s = x_parent->_right;
-                                }
-                                // Case *-2)
-                                // s->right is always RED or NULL
-                                s->_color = x_parent->_color;
-                                x_parent->_color = BLACK;
-                                if (s->_right)
-                                    s->_right->_color = BLACK;
-                                _rotate_left(x_parent);
-                                break ;
-                            }
-                        }
-                        else
-                        { 
-                            // 위의 반대 버전 
-                            node_ptr s = x_parent->_left;
-                            if(s->_color == RED)
-                            {
-                                // case 2-4 (s가 RED인 경우는 이 경우 밖에 없다.)
-                                s->_color = BLACK;
-                                x_parent->_color = RED;
-                                _rotate_right(x_parent);
-                                s = x_parent->_left;
-                            }
-                            //s is always BLACK
-                            if ((s->_right == NULL) || (s->_right->_color == BLACK && (s->_left == NULL || s->_left->color == BLACK))) 
-                            { // Case 1-1) && 2-1))
-                                s->_color = RED;
-                                x = x_parent;
-                                x_parent = x_parent->_parent;
-                            }
-                            else
-                            {
-                                if(s->_left == NULL || s->_left->_color == BLACK)
-                                { // Case *-3
-                                    if (s->_right)
-                                        s->_right->_color = BLACK;
-                                    s->_color = RED;
-                                    _rotate_left(s);
-                                    s = x_parent->_left;
-                                }
-                                // Case *-2)
-                                // s->right is always RED or NULL
-                                s->_color = x_parent->_color;
-                                x_parent->_color = BLACK;
-                                if (s->_left)
-                                    s->_left->_color = BLACK;
-                                _rotate_right(x_parent);
-                                break ;
-                            }
-                        }
-                    }
-                    if (x) 
-                        x->_color = BLACK;
-                }
-                return y;
-            }
+            //     if (y->_left == NULL)
+            //         x = y->_right; // 자식 노드가 1개인 경우, 후계 노드는 y의 오른쪽 노드
+            //     else
+            //     {
+            //         if (y->_right == NULL)
+            //             x = y->_left; // 자식 노드가 1개인 경우, 후계 노드는 y의 왼쪽노드
+            //         else // 자식 노드가 2개인 경우
+            //         {
+            //             y = y->_right;
+            //             while (y->_left != NULL)
+            //                 y = y->_left; // y => Successor
+            //             x = y->_right; // x => Succexssor 의 유일한 자식노드
+            //         }
+            //     }
+            //     if (y != z) // 자식 노드가 2개인 경우
+            //     {
+            //         // y : successor
+            //         // z : 삭제할 노드 
+            //         // x : sucessor 의 자식 노드
+            //         z->_left->_parent = y;
+            //         y->_left = z->_left;
+            //         if (y != z->_right)
+            //         {
+            //             x_parent = y->_parent;
+            //             if (x)
+            //                 x->_parent = y->_parent;
+            //             y->_parent->_left = x;
+            //             y->_right = z->_right;
+            //             z->_right->_parent = y;
+            //         }
+            //         else
+            //         {
+            //          // Successor 가 삭제하려는 노드 바로 오른쪽 자식일때
+            //             x_parent = y;
+            //         }
+            //         if (z->_root == z)
+            //             z->_root = x;
+            //         else if (z->_parent->_left == z)
+            //         {
+            //             z->_parent->_left = y;
+            //         }    
+            //         else
+            //             z->_parent->_right = y;
+            //         y->_parent = z->_parent;
+            //         ft::swap(y->_color, z->_color);
+            //         y = z; // y now points to node to be actually deleted
+            //         if (z->_root->_left == z)
+            //         {
+            //             if (z->_right == NULL)
+            //                 z->_root->_left = z->_parent;
+            //             else
+            //                 z->_root->_left = tree_minimum(x);
+            //         }
+            //         if (z->_root->_right == z)
+            //         {
+            //             if (z->_left == NULL)
+            //                 z->_root->_right = z->_parent;
+            //             else
+            //                 z->_root->_right = tree_minimum(x);
+            //         }
+            //     } 
+            //     // y now points to node to be actually deleted
+            //     if (y->_color != RED)
+            //     { 
+            //         // RED => 그냥 삭제
+            //         while( x!= z->_root && (x == NULL || x->_color == BLACK)) // y가 BLACK이고, x가 BLACK인 경우 문제 발생
+            //         {
+            //             if (x == x_parent->_left)
+            //             {
+            //                 node_ptr s = x_parent->_right;
+            //                 if(s->_color == RED)
+            //                 {
+            //                     // case 2-4 (s가 RED인 경우는 이 경우 밖에 없다.)
+            //                     s->_color = BLACK;
+            //                     x_parent->_color = RED;
+            //                     _rotate_left(x_parent);
+            //                     s = x_parent->_right;
+            //                 }
+            //                 //s is always BLACK
+            //                 if ((s->_left == NULL) || (s->_left->_color == BLACK && (s->_right == NULL || s->_right->color == BLACK))) 
+            //                 { 
+            //                     // Case 1-1) && 2-1))
+            //                     s->_color = RED;
+            //                     x = x_parent;
+            //                     x_parent = x_parent->_parent;
+            //                 }
+            //                 else
+            //                 {
+            //                     if(s->_right == NULL || s->_right->_color == BLACK)
+            //                     { // Case *-3
+            //                         if (s->_left)
+            //                             s->_left->_color = BLACK;
+            //                         s->_color = RED;
+            //                         _rotate_right(s);
+            //                         s = x_parent->_right;
+            //                     }
+            //                     // Case *-2)
+            //                     // s->right is always RED or NULL
+            //                     s->_color = x_parent->_color;
+            //                     x_parent->_color = BLACK;
+            //                     if (s->_right)
+            //                         s->_right->_color = BLACK;
+            //                     _rotate_left(x_parent);
+            //                     break ;
+            //                 }
+            //             }
+            //             else
+            //             { 
+            //                 // 위의 반대 버전 
+            //                 node_ptr s = x_parent->_left;
+            //                 if(s->_color == RED)
+            //                 {
+            //                     // case 2-4 (s가 RED인 경우는 이 경우 밖에 없다.)
+            //                     s->_color = BLACK;
+            //                     x_parent->_color = RED;
+            //                     _rotate_right(x_parent);
+            //                     s = x_parent->_left;
+            //                 }
+            //                 //s is always BLACK
+            //                 if ((s->_right == NULL) || (s->_right->_color == BLACK && (s->_left == NULL || s->_left->color == BLACK))) 
+            //                 { // Case 1-1) && 2-1))
+            //                     s->_color = RED;
+            //                     x = x_parent;
+            //                     x_parent = x_parent->_parent;
+            //                 }
+            //                 else
+            //                 {
+            //                     if(s->_left == NULL || s->_left->_color == BLACK)
+            //                     { // Case *-3
+            //                         if (s->_right)
+            //                             s->_right->_color = BLACK;
+            //                         s->_color = RED;
+            //                         _rotate_left(s);
+            //                         s = x_parent->_left;
+            //                     }
+            //                     // Case *-2)
+            //                     // s->right is always RED or NULL
+            //                     s->_color = x_parent->_color;
+            //                     x_parent->_color = BLACK;
+            //                     if (s->_left)
+            //                         s->_left->_color = BLACK;
+            //                     _rotate_right(x_parent);
+            //                     break ;
+            //                 }
+            //             }
+            //         }
+            //         if (x) 
+            //             x->_color = BLACK;
+            //     }
+            //     return y;
+            // }
+			while (x != _root && x->_color == BLACK)
+			{
+				// if x is left child, side is true else side is false
+				bool side = (x == x->_parent->_left);
+				// set sibling node
+				node_ptr s = side ? x->_parent->_right : x->_parent->_left;
 
-
+				// case 1
+				if (s->_color == RED)
+				{
+					s->_color = BLACK;
+					x->_parent->_color = RED;
+					side ? _left_rotate(x->_parent) : _right_rotate(x->_parent);
+					s = side ? x->_parent->_right : x->_parent->_left;
+				}
+				// case 2
+				if (s->_left->_color == BLACK && s->_right->_color == BLACK)
+				{
+					s->_color = RED;
+					x = x->_parent;
+				}
+				else
+				{
+					// case 3
+					if ((side ? s->_right->_color : s->_left->_color) == BLACK)
+					{
+						(side ? s->_left->_color : s->_right->_color) = BLACK;
+						s->_color = RED;
+						side ? _right_rotate(s) : _left_rotate(s);
+						s = side ? x->_parent->_right : x->_parent->_left;
+					}
+					// case 4
+					s->_color = x->_parent->_color;
+					x->_parent->_color = BLACK;
+					(side ? s->_right->_color : s->_left->_color) = BLACK;
+					side ? _left_rotate(x->_parent) : _right_rotate(x->_parent);
+					x = _root;
+				}
+			}
+			x->_color = BLACK;
+			_root->_color = BLACK;
+		}
     };
     
 
