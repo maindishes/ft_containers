@@ -170,7 +170,7 @@ namespace ft
                 // empty
             bool empty() const 
             { 
-                return (_tree->size() == 0); 
+                return (_tree.size() == 0); 
             }
                 // size
             size_type size() const
@@ -275,7 +275,7 @@ namespace ft
                 //value_comp
             value_compare value_comp() const
             {
-                return value_comp(key_compare());
+                return value_compare(key_compare());
             }
             
             // Operation

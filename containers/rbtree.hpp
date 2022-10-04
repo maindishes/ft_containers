@@ -85,25 +85,25 @@ namespace ft
             }
             static node_ptr tree_minimum(node_ptr x)
             {
-                while (x->_left != NULL)
+                while (x && !isTNULL(x->_left))
                     x = x->_left;
                 return x;
             }
             static const_node_ptr tree_minimum(const_node_ptr x)
             {
-                while (x->_left != NULL)
+                while (x && !isTNULL(x->_left))
                     x = x->_left;
                 return x;
             }
             static node_ptr tree_maximum(node_ptr x)
             {
-                while (x->_right != NULL)
+                while (x && !isTNULL(x->_right))
                     x = x->_right;
                 return x;
             }
             static const_node_ptr tree_maximum(const_node_ptr x)
             {
-                while (x->_right != NULL)
+                while (x && !isTNULL(x->_right))
                     x = x->_right;
                 return x;
             }

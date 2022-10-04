@@ -37,7 +37,7 @@ namespace ft
             typedef T   *pointer;
             typedef T   &reference;
         // Member variables
-        private:
+        // private:
             node_ptr    _node;
 
         // Member functions
@@ -193,7 +193,7 @@ namespace ft
         typedef const T   &reference;
         
         // Member variables
-    private:
+    // private:
         node_ptr    _node;
 
         // Member functions
@@ -208,6 +208,10 @@ namespace ft
 
         template <class U>    // copy
         rbtree_const_iterator(const rbtree_const_iterator<U> &x)
+        : _node(x._node)
+        {}
+        template <class U>    // copy
+        rbtree_const_iterator(const rbtree_iterator<U> &x)
         : _node(x._node)
         {}
 
@@ -317,7 +321,6 @@ namespace ft
             return _node;
         }
     };
-
     template <typename Value>
     bool operator==(const rbtree_const_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
     {
@@ -326,6 +329,18 @@ namespace ft
 
     template <typename Value>
     bool operator!=(const rbtree_const_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
+    {
+        return (lhs.base() == rhs.base());
+    }
+
+    template <typename Value>
+    bool operator==(const rbtree_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
+    {
+        return (rhs.base() == lhs.base());
+    }
+
+    template <typename Value>
+    bool operator!=(const rbtree_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
     {
         return (lhs.base() != rhs.base());
     }
@@ -337,7 +352,7 @@ namespace ft
     }
 
     template <typename Value>
-    bool operator!=(const rbtree_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
+    bool operator!=(const rbtree_const_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
     {
         return (lhs.base() != rhs.base());
     }
