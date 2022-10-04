@@ -143,11 +143,11 @@ namespace ft
                 // end()
             iterator end()
 			{
-				return this->_tree.end();
+				return (this->_tree.end());
 			}
 			const_iterator end() const
 			{
-				return this->_tree.end();
+				return (this->_tree.end());
 			}
                 // rbegin()
 			iterator rbegin()
@@ -339,12 +339,12 @@ namespace ft
                 return it;
             }
                 // equal_range
-            ft::pair<iterator,iterator>equal_range (const key_type& k) const
+            ft::pair<iterator,iterator>equal_range (const key_type& k)
             {
-                // return ft::pair<iterator,iterator>(lower_bound(k),upper_bound(k));
-                return ft::make_pair(lower_bound(k),upper_bound(k));
+                return ft::pair<iterator,iterator>(lower_bound(k),upper_bound(k));
+                // return ft::make_pair(lower_bound(k),upper_bound(k));
             }
-            ft::pair<const_iterator,const_iterator>equal_range (const key_type& k)
+            ft::pair<const_iterator,const_iterator>equal_range (const key_type& k) const
             {
                 return ft::make_pair(lower_bound(k),upper_bound(k));
             }
