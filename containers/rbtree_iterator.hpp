@@ -130,12 +130,6 @@ namespace ft
             // operation--
             void decrement()
             {
-                // 
-                if (node_type::isTNULL(_node->_right))
-                {
-                    node_type::tree_maximum(_node->left);
-                    return ;
-                }
                 if (!node_type::isTNULL(_node->_left))
                 {
                     node_type::tree_maximum(_node->_left);
