@@ -3,6 +3,7 @@
 
 #include "iterator_base.hpp"
 #include "rbtree.hpp"
+// #include "reverse_iterator.hpp"
 #include <cstddef> // std::ptrdiff_t
 
     enum node_color
@@ -23,6 +24,7 @@ namespace ft
     //         typename Alloc = std::allocator<Val>
     //         >
     // class rbtree;
+
     template<typename T>
     class rbtree_iterator
     {
@@ -46,26 +48,28 @@ namespace ft
             : _node(NULL) 
             {}
 
-            explicit rbtree_iterator(node_ptr &x)
+            explicit rbtree_iterator(const node_ptr &x)
             : _node(x)
-            {}
+            {
+            }
 
-            template <class U>    // copy
+            template <typename U>    // copy
             rbtree_iterator(const rbtree_iterator<U> &x)
             : _node(x._node)
             {}
 
-            template <class U>      // copy assignment
+            template <typename U>      // copy assignment
             _Self &operator=(const rbtree_iterator<U> &x)
             {
                 _node = x._node;
                 return *this;
             }
-            _Self &operator=(const node_ptr& p)
-            {
-                _node= p;
-                return *this;
-            }
+
+            // _Self &operator=(const node_ptr& p)
+            // {
+            //     _node= p;
+            //     return *this;
+            // }
 
             virtual ~rbtree_iterator() {}
 
@@ -89,37 +93,38 @@ namespace ft
             // }
 
             // operation++
-            void increment()
-            {
-                if (_node->_right != NULL)
-                {
-                    _node = _node->_right;
-                    while (_node->_left != NULL)
-                        _node = _node->_left;
-                }
-                else
-                {
-                    node_ptr p = _node->_parent;
-                    while (_node == p->_right)
-                    {
-                        _node =p;
-                        p = p->_parent;
-                    }
-                    if (_node->_right != p)
-                        _node = p;
-                }
-            }
+			node_ptr _increment(node_ptr x)
+			{
+				// Case 1: right child exist, return leftmost node
+				if (!node_type::isTNULL(x->_right))
+				{
+					return node_type::tree_minimum(x->_right);
+				}
+				// backup _TNULL
+				node_ptr _TNULL = x->_right;
+				// Case 2: up until it came from left
+				while (x->_parent)
+				{
+					if (x->_parent->_left == x)
+					{
+						return x->_parent;
+					}
+					x = x->_parent;
+				}
+				// Case 3: return TNULL
+				return _TNULL;
+			}
 
             _Self &operator++()
             {
-                increment();
+                _node = _increment(_node);
                 return *this;
             }
 
             _Self operator++(int)
             {
-                _Self temp = *this;
-                increment();
+                _Self temp(*this);
+                ++(*this);
                 return temp;
             }
             // operation--
@@ -128,7 +133,7 @@ namespace ft
                 // 
                 if (node_type::isTNULL(_node->_right))
                 {
-                    node_type::tree_maximum(_node->_right);
+                    node_type::tree_maximum(_node->left);
                     return ;
                 }
                 if (!node_type::isTNULL(_node->_left))
@@ -156,12 +161,14 @@ namespace ft
                 decrement();
                 return *this;
             }
+
             _Self operator--(int)
             {
-                _Self temp = *this;
+                 _Self temp = *this;
                 decrement();
-                return *this;
+                return *this;;
             }
+
             
             node_ptr base() const
             {
@@ -227,10 +234,12 @@ namespace ft
                 _node = x._node;
             return *this;
         }
+
         template <typename U>
         _Self& operator=(const rbtree_iterator<U>& it)
         {
-            _node = it;
+            if (this != &it)
+                _node = it._node;
             return *this;
         }
         virtual ~rbtree_const_iterator() {}
@@ -253,37 +262,38 @@ namespace ft
         //     return (_node != x._node);
         // }
         // operation++
-        void increment()
+        node_ptr _increment(node_ptr x)
         {
-            if (_node->_right != NULL)
+            // Case 1: right child exist, return leftmost node
+            if (!node_type::isTNULL(x->_right))
             {
-                _node = _node->_right;
-                while (_node->_left != NULL)
-                    _node = _node->_left;
+                return node_type::tree_minimum(x->_right);
             }
-            else
+            // backup _TNULL
+            node_ptr _TNULL = x->_right;
+            // Case 2: up until it came from left
+            while (x->_parent)
             {
-                node_ptr p = _node->_parent;
-                while (_node == p->_right)
+                if (x->_parent->_left == x)
                 {
-                    _node =p;
-                    p = p->_parent;
+                    return x->_parent;
                 }
-                if (_node->_right != p)
-                    _node = p;
+                x = x->_parent;
             }
+            // Case 3: return TNULL
+            return _TNULL;
         }
 
         _Self &operator++()
         {
-            increment();
+            _node = _increment(_node);
             return *this;
         }
 
         _Self operator++(int)
         {
-            rbtree_const_iterator temp = *this;
-            increment();
+            _Self temp(*this);
+            ++(*this);
             return temp;
         }
         // operation--
@@ -320,9 +330,9 @@ namespace ft
             decrement();
             return *this;
         }
-        rbtree_const_iterator operator--(int)
+        _Self operator--(int)
         {
-            rbtree_const_iterator temp = *this;
+            _Self temp = *this;
             decrement();
             return *this;
         }

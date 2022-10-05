@@ -15,7 +15,7 @@
 namespace ft
 {   
     // Red-Black Tree Node
-    enum node_color
+    enum 
     {
         RED,
         BLACK
@@ -56,18 +56,18 @@ namespace ft
           
             virtual ~rbtree_node() {}
             
-            rbtree_node &operator=(const rbtree_node& n)
-            {
-                if (this != &n)
-                {
-                    _data = n._data;
-                    _color = n._color;
-                    _parent = n._parent;
-                    _left = n._left;
-                    _right = n._right;
-                }
-                return *this;
-            }
+            // rbtree_node &operator=(const rbtree_node& n)
+            // {
+            //     if (this != &n)
+            //     {
+            //         _data = n._data;
+            //         _color = n._color;
+            //         _parent = n._parent;
+            //         _left = n._left;
+            //         _right = n._right;
+            //     }
+            //     return *this;
+            // }
 
             static bool isTNULL(node_ptr x)
             {
@@ -78,7 +78,7 @@ namespace ft
             }
             static bool isTNULL(const_node_ptr x)
             {
-                if (x->_left == NULL)
+                if (x && x->_left == NULL)
                     return true;
                 else
                     return false;
@@ -494,13 +494,14 @@ namespace ft
             //     // end
             iterator end() 
             {
-                // return iterator(this->getTNULL());
-                return iterator(this->_TNULL);
+                // node_ptr temp =ft::rbtree_node<value_type>::tree_minum()
+                return iterator(this->getTNULL());
+                // return iterator(this->_TNULL);
             }
             const_iterator end() const
             {
-                // return const_iterator(this->getTNULL());
-                return const_iterator(this->_TNULL);
+                return const_iterator(this->getTNULL());
+                // return const_iterator(this->_TNULL);
             }
             node_ptr _getnode(node_type temp)
             {
@@ -564,12 +565,22 @@ namespace ft
                 // insertNode
             node_ptr _insert_node(const value_type &data)
             {
-                node_ptr z = _getnode(node_type(NULL, _TNULL,_TNULL, data,RED));
+                node_ptr z = _getnode(node_type(NULL, _TNULL, _TNULL, data, RED));
                 node_ptr y = NULL;
                 node_ptr x = _root;
 
+                if (_root->_color == RED)
+                {
+                    _node_alloc.destroy(_root);
+                    _node_alloc.deallocate(_root, 1);
+                    _root = z;
+                    _root->_color = BLACK;
+                    return z;
+                }
+
                 while (x != _TNULL)
                 {
+                    node_ptr z = _getnode(node_type(NULL, _TNULL,_TNULL, data,RED));
                     y = x;
                     // data < x->data
                     if (_comp( KeyOfValue()(z->_data),   KeyOfValue()(x->_data)))

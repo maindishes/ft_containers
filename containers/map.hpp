@@ -127,7 +127,11 @@ namespace ft
 			map& operator=(const map& __x)
 			{
 				if (this != &__x)
-					this->_tree = __x._tree;
+				{
+                    this->clear();
+                    for (const_iterator it = __x.begin(); it != __x.end(); ++it)
+                        this->insert(*it);
+                }
 				return *this;
 			}
 			// Member functions
@@ -143,29 +147,35 @@ namespace ft
                 // end()
             iterator end()
 			{
-				return (this->_tree.end());
+				// return iterator((this->_tree.getTNULL()));
+                return _tree.end();
 			}
 			const_iterator end() const
 			{
-				return (this->_tree.end());
+				// return const_iterator(this->_tree.getTNULL());
+                return _tree.end();
 			}
                 // rbegin()
-			iterator rbegin()
+			reverse_iterator rbegin()
 			{
-				return this->_tree.rbegin();
+				// return this->_tree.rbegin();
+                return reverse_iterator(end());
 			}
-			const_iterator rbegin() const
+			const_reverse_iterator rbegin() const
 			{
-				return this->_tree.rbegin();
+				// return this->_tree.rbegin();
+                return (const_reverse_iterator(end()));
 			}
                 // rend()
             reverse_iterator rend()
 			{
-				return this->_tree.rend();
+				// return this->_tree.rend();
+                return reverse_iterator(begin());
 			}
 			const_reverse_iterator rend() const
 			{
-				return this->_tree.rend();
+				// return this->_tree.rend();
+                return const_reverse_iterator(begin());
 			}
                 // empty
             bool empty() const 
@@ -248,11 +258,10 @@ namespace ft
                     // (3)	
             void erase (iterator first, iterator last)
             {
-                iterator it = first;
-                while(it != last)
+                
+                for(iterator it = first; it != last; it++)
                 {
                     this->_tree._rb_delete(it._node);
-                    ++it;
                     // _tree._rb_delete(first._node);
                     // first++;
                 }
