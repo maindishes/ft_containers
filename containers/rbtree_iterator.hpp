@@ -125,22 +125,27 @@ namespace ft
             // operation--
             void decrement()
             {
-                // case header
-                if (_node->_color == RED && _node->_parent->_parent == _node)
-                    _node = _node->_right;
-                else if (_node->_left != NULL)
+                // 
+                if (node_type::isTNULL(_node->_right))
                 {
-                    node_ptr y = _node->_left;
-                    while (y->_right != NULL)
-                        y = y->_right;
-                    _node = y;
+                    node_type::tree_maximum(_node->_right);
+                    return ;
+                }
+                if (!node_type::isTNULL(_node->_left))
+                {
+                    node_type::tree_maximum(_node->_left);
+                    return ;
                 }
                 else 
                 {
                     node_ptr p = _node->_parent;
-                    while (_node == p->_left)
+                    while (p->_parent)
                     {
-                        _node = p;
+                        if (p->_parent->_left == _node)
+                        {
+                            p =p->_parent;
+                            return ;
+                        }
                         p = p->_parent;
                     }
                     _node =p;
@@ -295,16 +300,21 @@ namespace ft
                 _node = y;
             }
             else 
-            {
-                node_ptr p = _node->_parent;
-                while (_node == p->_left)
                 {
-                    _node = p;
-                    p = p->_parent;
+                    node_ptr p = _node->_parent;
+                    while (p->_parent)
+                    {
+                        if (p->_parent->_left == _node)
+                        {
+                            p =p->_parent;
+                            return ;
+                        }
+                        p = p->_parent;
+                    }
+                    _node =p;
                 }
-                _node =p;
-            }
         }
+        
         rbtree_const_iterator &operator--()
         {
             decrement();

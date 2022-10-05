@@ -237,18 +237,22 @@ namespace ft
                     // (2)
             size_type erase (const key_type& k)
             {
-                iterator pos = this->_find_key(k);
-                if (pos == this->end())
-                    return 0;
-                this->erase(pos);
-                return 1;
+                node_ptr pos = this->_tree._find_key(k);
+                if (pos)
+                {
+                    _tree._rb_delete(pos);
+                    return 1;
+                }
+                return 0;
             }
                     // (3)	
             void erase (iterator first, iterator last)
             {
-                while(first != last)
+                iterator it = first;
+                while(it != last)
                 {
-                    this->erase(first++);
+                    this->_tree._rb_delete(it._node);
+                    ++it;
                     // _tree._rb_delete(first._node);
                     // first++;
                 }
