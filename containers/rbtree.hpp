@@ -580,7 +580,7 @@ namespace ft
 
                 while (x != _TNULL)
                 {
-                    node_ptr z = _getnode(node_type(NULL, _TNULL,_TNULL, data,RED));
+                    // node_ptr z = _getnode(node_type(NULL, _TNULL,_TNULL, data,RED));
                     y = x;
                     // data < x->data
                     if (_comp( KeyOfValue()(z->_data),   KeyOfValue()(x->_data)))
@@ -596,15 +596,15 @@ namespace ft
                     y->_left = z;
                 else
                     y->_right = z;
-                if (z->_parent == NULL)
+                if (z == _root)
                 {
                     z->_color = BLACK;
                     return z;
                 }
-                if (z->_parent->_parent == NULL)
+                if (z->_parent== _root)
                     return z;
-                return z; // 이부분 정확히 모름
                 _insert_fix(z);
+                return z; // 이부분 정확히 모름
             }
             // delete node in rbtree
             void _rb_delete(const node_ptr &x)
@@ -734,16 +734,16 @@ namespace ft
 
             void _insert_fix(node_ptr k)
             {
-                k->_color = RED; // new node => RED
-                // if parent is left child of grandparent, side is true else side is false
-                bool side = (k->_parent == k->_parent->_parent->_left); // x의 parent가 GrandParent의 왼쪽 자식인 경우
-                
-                // set uncle node
-                node_ptr u = side ? k->_parent->_parent->_right : k->_parent->_parent->_left;
-                
+                // k->_color = RED; // new node => RED
                 // RB-tree의 조건을 만족할 동안 (Double Red)
                 while( k != _root && k->_parent->_color == RED)
                 {
+                    // if parent is left child of grandparent, side is true else side is false
+                    bool side = (k->_parent == k->_parent->_parent->_left); // x의 parent가 GrandParent의 왼쪽 자식인 경우
+                    
+                    // set uncle node
+                    node_ptr u = side ? k->_parent->_parent->_right : k->_parent->_parent->_left;
+                    
                     // Case 1
                     if (u->_color == RED)
                     {

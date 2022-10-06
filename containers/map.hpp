@@ -116,7 +116,10 @@ namespace ft
                 // this->insert(first,last);
 			}
 				// Copy constructor
-			map(const map& x) : _tree(x._tree) {}
+			map(const map& x)
+            {
+                *this = x;
+            }
 				// Destructor
 			virtual ~map() 
 			{
