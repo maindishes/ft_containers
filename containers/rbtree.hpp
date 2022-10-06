@@ -452,9 +452,9 @@ namespace ft
             typedef typename ft::rbtree_node<value_type>::const_node_ptr   const_node_ptr;
 
             typedef ft::rbtree_iterator<value_type>					iterator;
-		    typedef ft::rbtree_const_iterator<value_type>		const_iterator;
-            typedef ft::reverse_iterator<iterator>								reverse_iterator;
-		    typedef ft::reverse_iterator<const_iterator>						const_reverse_iterator;
+		    typedef ft::rbtree_const_iterator<value_type>		    const_iterator;
+            typedef ft::reverse_iterator<iterator>					reverse_iterator;
+		    typedef ft::reverse_iterator<const_iterator>			const_reverse_iterator;
         // Member variables
         private:
             node_allocator_type     _node_alloc;
