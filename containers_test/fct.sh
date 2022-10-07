@@ -73,7 +73,7 @@ timeSafe () {
 	res='';
 	res=$( echo "$2 * 20" | bc -l );
 	if [[ $1 < $res ]]; then
-		printf "OK"
+		printf "✅"
 	else
 		printf "KO"
 	fi
