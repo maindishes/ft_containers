@@ -55,15 +55,15 @@ namespace ft
             typedef typename tree_type::node_type node_type;
             typedef typename tree_type::node_ptr node_ptr;
         public:
-            class value_compare : public std::binary_function<value_type, value_type, bool>
+            class value_compare 
             {
                 friend class	map;
                 
                 protected :
-                    key_compare comp;
+                    Compare _comp;
                     // constructed with map's comparison object
-                    value_compare(key_compare c)
-                    : comp(c)
+                    value_compare(Compare c)
+                    : _comp(c)
                     {}
                 public :
                     typedef bool		result_type;
@@ -71,7 +71,7 @@ namespace ft
                     typedef value_type	second_argument_type;
                     bool operator()( const value_type& lhs, const value_type& rhs ) const
                     {
-                        return comp(lhs.first, rhs.first);
+                        return _comp(lhs.first, rhs.first);
                     }
             };
             typedef typename tree_type::iterator                			iterator;
@@ -109,6 +109,7 @@ namespace ft
 			{   
                 (void)comp;
 			    (void)alloc;
+                // std::cout << "TEST Con " << std::endl;
 			    for (InputIt it = first; it != last; ++it)
 			    {
 				    this->insert(*it);
@@ -123,7 +124,7 @@ namespace ft
 				// Destructor
 			virtual ~map() 
 			{
-				while(this->begin() != this->end())
+				while(!this->empty())
 					this->erase(this->begin());
 			}
 			// Operator=
@@ -193,6 +194,8 @@ namespace ft
                 // max_size
             size_type max_size() const
             {
+                // node_type test_node(NULL, NULL, NULL, value_type(), BLACK);
+                // return sizeof(test_node);
                 return _tree.max_size();
             }
             // Element access:
@@ -209,7 +212,10 @@ namespace ft
                     //single element (1)	
             ft::pair<iterator,bool> insert(const value_type& val)
             {
+                // std::cout << "insert type #1" << std::endl;
                 node_ptr temp = _tree._find_key(val.first);
+                // std::cout << "TEST : " << _tree._rb_insert(val)->_data.first << std::endl;
+                // std::cout << " TEST val: " << val.first << val.second << std::endl;
                 if (temp)
                     return ft::make_pair(iterator(temp), false);
                 else
@@ -235,6 +241,7 @@ namespace ft
                     // (1)	
             void erase (iterator position)
             {
+                // std::cout << " erase #1 find key TEST : " << position._node->_data.second << std::endl;
                 _tree._rb_delete(position.base());
             }
             // size_type erase(const key_type &k)
@@ -251,6 +258,7 @@ namespace ft
             size_type erase (const key_type& k)
             {
                 node_ptr pos = this->_tree._find_key(k);
+                // std::cout << " erase find key TEST : " << pos->_data.first << std::endl;
                 if (pos)
                 {
                     _tree._rb_delete(pos);
@@ -261,12 +269,18 @@ namespace ft
                     // (3)	
             void erase (iterator first, iterator last)
             {
-                
-                for(iterator it = first; it != last; it++)
+                // iterator it = first++;
+
+                for(iterator it = first++; it != last; first++)
                 {
+                    // std::cout << " erase #find key it TEST : " << it._node->_data.second << std::endl;
+                    // std::cout << " erase #find key first TEST : " << first._node->_data.second << std::endl;
+
                     this->_tree._rb_delete(it._node);
+                    it = first;
                     // _tree._rb_delete(first._node);
                     // first++;
+                    // it = first;
                 }
             }
                 // swap
@@ -343,14 +357,14 @@ namespace ft
             iterator upper_bound (const key_type& k)
             {
                iterator it = this->begin();
-                while(key_comp()(k, it->first) && it != this->end())
+                while(!key_comp()(k, it->first) && it != this->end())
                     ++it;
                 return it;
             }
             const_iterator upper_bound (const key_type& k) const
             {
                 const_iterator it = this->begin();
-                while(key_comp()(k, it->first) && it != this->end())
+                while(!key_comp()(k, it->first) && it != this->end())
                     ++it;
                 return it;
             }

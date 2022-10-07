@@ -48,13 +48,8 @@ namespace ft
             rbtree_node(node_ptr parent, node_ptr left, node_ptr right, value_type data, int color)
             : _data(data),_color(color), _parent(parent), _left(left), _right(right)
             {}
-
-            rbtree_node(const rbtree_node &x)
-            : _data(x._data), _color(x._color), _parent(x._parent), _left(x._left), _right(x._right)
-            {}
-
           
-            virtual ~rbtree_node() {}
+            ~rbtree_node() {}
             
             // rbtree_node &operator=(const rbtree_node& n)
             // {
@@ -445,8 +440,9 @@ namespace ft
             typedef Val                                                    value_type;
             typedef Alloc                                                  allocator_type;
             typedef Compare                                                key_compare;
-            typedef std::size_t size_type;
+            typedef std::size_t                                            size_type;
             typedef ft::rbtree_node<value_type>                            node_type;
+            // typedef typename allocator_type::template rebind<node_type>::other _no;
             typedef typename node_type::node_allocator_type                node_allocator_type;
             typedef typename ft::rbtree_node<value_type>::node_ptr         node_ptr;
             typedef typename ft::rbtree_node<value_type>::const_node_ptr   const_node_ptr;
@@ -458,6 +454,8 @@ namespace ft
         // Member variables
         private:
             node_allocator_type     _node_alloc;
+            // allocator_type          _alloc;
+            // _no                     _n;
             node_ptr                _root;
             node_ptr                _TNULL;
             key_compare             _comp;
@@ -483,11 +481,15 @@ namespace ft
                 // begin
             iterator begin()
             {
+                if (this->_node_cnt == 0) // size == 0 일때 는 end() 반환 
+                    return this->end();
                 node_ptr temp = ft::rbtree_node<value_type>::tree_minimum(this->get_root());
                 return (iterator(temp));
             }
             const_iterator begin() const
             {
+                if (this->_node_cnt == 0) // size == 0 일때 는 end() 반환 
+                    return this->end();
                 node_ptr temp = ft::rbtree_node<value_type>::tree_minimum(this->get_root());
                 return (const_iterator(temp));
             }
@@ -534,8 +536,10 @@ namespace ft
                 node_ptr temp = _root;
                 if (_root->_color == RED)
                     return NULL;
+                // std::cout << "TEST PASS COLOR " << _equal(key, KeyOfValue()(temp->_data)) << std::endl;
                 while (temp != _TNULL && !_equal(key, KeyOfValue()(temp->_data)))
                 {
+                    // std::cout << "TEST pass while : " << std::endl;
                     if (_comp(key, KeyOfValue()(temp->_data)))
 						temp = temp->_left;
 					else
@@ -545,6 +549,8 @@ namespace ft
                     return NULL;
 				return temp;
             }
+
+    
             void swap(rbtree &x)
             {
                 ft::swap(_node_alloc, x._node_alloc);
@@ -583,7 +589,7 @@ namespace ft
                     // node_ptr z = _getnode(node_type(NULL, _TNULL,_TNULL, data,RED));
                     y = x;
                     // data < x->data
-                    if (_comp( KeyOfValue()(z->_data),   KeyOfValue()(x->_data)))
+                    if (_comp( KeyOfValue()(z->_data), KeyOfValue()(x->_data)))
                         x = x->_left;
                     else
                         x = x->_right;
@@ -674,6 +680,7 @@ namespace ft
             size_type max_size() const
             {
                 return (_node_alloc.max_size() < PTRDIFF_MAX) ? _node_alloc.max_size() : PTRDIFF_MAX;
+                // return (_alloc.max_size() / 5);
             }
 
         private:

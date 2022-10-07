@@ -17,14 +17,6 @@ namespace ft
     template <typename T> 
     struct rbtree_node;
 
-    // template <typename Key,
-    //         typename Val,
-    //         typename KeyOfValue,
-    //         typename Compare = std::less<Key>,
-    //         typename Alloc = std::allocator<Val>
-    //         >
-    // class rbtree;
-
     template<typename T>
     class rbtree_iterator
     {
@@ -171,18 +163,16 @@ namespace ft
                 // node_type::tree_maximum(_node->_left);
                 return node_type::tree_maximum(_node->_left);
             }
-            else 
+
+            while (_node->_parent)
             {
-                while (_node->_parent)
+                if (_node->_parent->_right == _node) // ㄴㅐ가 오른쪽 자식일때는 부모로 올로가는거. 
                 {
-                    if (_node->_parent->_right == _node) // ㄴㅐ가 오른쪽 자식일때는 부모로 올로가는거. 
-                    {
-                        return _node->_parent;
-                    }
-                    _node = _node->_parent;
+                    return _node->_parent;
                 }
-                return NULL;
+                _node = _node->_parent;
             }
+            return NULL;
         }
 
             _Self &operator--()
@@ -203,6 +193,20 @@ namespace ft
             {
                 return _node;
             }
+            
+            
+            // friend bool operator==(const _Self& lhs, const _Self& rhs)
+            // {
+            //     return (rhs.base() == lhs.base());
+            // }
+
+           
+            // friend bool operator!=(const _Self& lhs, const _Self& rhs)
+            // {
+            //     return (lhs.base() == rhs.base());
+            // }
+
+
     };
     template <typename Value>
     bool operator==(const rbtree_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
@@ -213,7 +217,7 @@ namespace ft
     template <typename Value>
     bool operator!=(const rbtree_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
     {
-        return (lhs.base() == rhs.base());
+        return (lhs.base() != rhs.base());
     }
 
 
@@ -290,6 +294,9 @@ namespace ft
         // {
         //     return (_node != x._node);
         // }
+
+
+        
         // operation++
         node_ptr _increment(node_ptr x)
         {
@@ -371,23 +378,20 @@ namespace ft
                 // node_type::tree_maximum(_node->_left);
                 return node_type::tree_maximum(_node->_left);
             }
-            else 
+            while (_node->_parent)
             {
-                while (_node->_parent)
+                if (_node->_parent->_right == _node) // ㄴㅐ가 오른쪽 자식일때는 부모로 올로가는거. 
                 {
-                    if (_node->_parent->_right == _node) // ㄴㅐ가 오른쪽 자식일때는 부모로 올로가는거. 
-                    {
-                        return _node->_parent;
-                    }
-                    _node = _node->_parent;
+                    return _node->_parent;
                 }
-                return NULL;
+                _node = _node->_parent;
             }
+            return NULL;
         }
         /// @brief //
         /// @return /
 
-        rbtree_const_iterator &operator--()
+        _Self &operator--()
         {
             _node = decrement(_node);
             return *this;
@@ -396,7 +400,7 @@ namespace ft
         {
             _Self temp(*this);
             --(*this);
-            return *this;
+            return temp;
         }
         node_ptr base() const
         {
@@ -406,19 +410,19 @@ namespace ft
     template <typename Value>
     bool operator==(const rbtree_const_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
     {
-        return (rhs.base() == lhs.base());
+        return (lhs.base() == rhs.base());
     }
 
     template <typename Value>
     bool operator!=(const rbtree_const_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
     {
-        return (lhs.base() == rhs.base());
+        return (lhs.base() != rhs.base());
     }
 
     template <typename Value>
     bool operator==(const rbtree_iterator<Value>& lhs, const rbtree_const_iterator<Value>& rhs)
     {
-        return (rhs.base() == lhs.base());
+        return (lhs.base() == rhs.base());
     }
 
     template <typename Value>
@@ -430,7 +434,7 @@ namespace ft
     template <typename Value>
     bool operator==(const rbtree_const_iterator<Value>& lhs, const rbtree_iterator<Value>& rhs)
     {
-        return (rhs.base() == lhs.base());
+        return (lhs.base() == rhs.base());
     }
 
     template <typename Value>

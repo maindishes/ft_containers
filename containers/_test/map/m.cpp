@@ -186,7 +186,6 @@ namespace ft
 
 		void clear()
 		{
-			/* 최적화 필요 */
 			while (this->begin() != this->end())
 			{
 				this->erase(this->begin());
