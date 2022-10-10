@@ -336,8 +336,6 @@ namespace ft
             }
             return NULL;
         }
-        /// @brief //
-        /// @return /
 
         _Self &operator--()
         {
