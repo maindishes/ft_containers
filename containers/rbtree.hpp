@@ -40,29 +40,11 @@ namespace ft
             node_ptr    _left;
             node_ptr    _right;
 
-            // Member functions :
-            // rbtree_node()
-            // : _data(NULL),_color(BLACK),_parent(NULL), _left(NULL), _right(NULL)
-            // {}
-
             rbtree_node(node_ptr parent, node_ptr left, node_ptr right, value_type data, int color)
             : _data(data),_color(color), _parent(parent), _left(left), _right(right)
             {}
           
             ~rbtree_node() {}
-            
-            // rbtree_node &operator=(const rbtree_node& n)
-            // {
-            //     if (this != &n)
-            //     {
-            //         _data = n._data;
-            //         _color = n._color;
-            //         _parent = n._parent;
-            //         _left = n._left;
-            //         _right = n._right;
-            //     }
-            //     return *this;
-            // }
 
             static bool isTNULL(node_ptr x)
             {

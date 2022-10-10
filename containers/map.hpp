@@ -269,18 +269,12 @@ namespace ft
                     // (3)	
             void erase (iterator first, iterator last)
             {
-                // iterator it = first++;
+                iterator it = first++;
 
-                for(iterator it = first++; it != last; first++)
+                while(it != last)
                 {
-                    // std::cout << " erase #find key it TEST : " << it._node->_data.second << std::endl;
-                    // std::cout << " erase #find key first TEST : " << first._node->_data.second << std::endl;
-
                     this->_tree._rb_delete(it._node);
-                    it = first;
-                    // _tree._rb_delete(first._node);
-                    // first++;
-                    // it = first;
+                    it = first++;
                 }
             }
                 // swap
