@@ -193,19 +193,6 @@ namespace ft
             {
                 return _node;
             }
-            
-            
-            // friend bool operator==(const _Self& lhs, const _Self& rhs)
-            // {
-            //     return (rhs.base() == lhs.base());
-            // }
-
-           
-            // friend bool operator!=(const _Self& lhs, const _Self& rhs)
-            // {
-            //     return (lhs.base() == rhs.base());
-            // }
-
 
     };
     template <typename Value>
@@ -286,14 +273,6 @@ namespace ft
         {
             return &(_node->_data);
         }
-        // bool operator==(const rbtree_iteraotr &x)
-        // {
-        //     return (_node == x._node);
-        // }
-        // bool operator!=(const rbtree_const_iterator &x)
-        // {
-        //     return (_node != x._node);
-        // }
 
 
         
@@ -332,37 +311,6 @@ namespace ft
             ++(*this);
             return temp;
         }
-        // // operation--
-        // void decrement()
-        // {
-        //     // case header
-        //     if (node_type::isTNULL(_node))
-        //     {
-        //         node_type::tree_maximum(_node->_parent);
-        //         return ;
-        //     }
-        //     // 왼쪽 자식이 존재 할땐 부모의 오른쪽 자식 리턴하면 이함수에서 찾는 값이 충족 된다.
-        //     if (!node_type::isTNULL(_node->_left))
-        //     {
-        //         node_type::tree_maximum(_node->_left);
-        //         return ;
-        //     }
-        //     else 
-        //     {
-        //         node_ptr p = _node->_parent;
-        //         while (p->_parent)
-        //         {
-        //             if (p->_parent->_right == _node) // ㄴㅐ가 오른쪽 자식일때는 부모로 올로가는거. 
-        //             {
-        //                 p = p->_parent;
-        //                 return ;
-        //             }
-        //             p = p->_parent;
-        //         }
-        //         _node = p;
-        //     }
-        // }
-        // //////
 
         node_ptr decrement(node_ptr _node)
         {

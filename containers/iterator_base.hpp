@@ -69,16 +69,5 @@ namespace ft
         typedef const T&                              reference;
         typedef random_access_iterator_tag      iterator_category;
     };            
-
-// 나중에 algorithm.hpp 로 옮겨 . 
-// template<typename InputIterator>
-// typename ft::iterator_traits<InputIterator>::difference_type
-//     distance (InputIterator first, InputIterator last)
-//     {
-//         typename ft::iterator_traits<InputIterator>::difference_type n = 0;
-//         for (first != last; first++)
-//             n++;
-//         return (n);
-//     }
 }
 #endif

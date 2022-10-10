@@ -234,7 +234,7 @@ namespace ft
             {
                 // if (n > max_size())
                 // {
-                //     throw std::length_error("ft_vector"); // 원랜 "vector" 로만 나옴
+                //     throw std::length_error("ft_vector"); 
                 // }
                 if (n > this->capacity())
                 {
