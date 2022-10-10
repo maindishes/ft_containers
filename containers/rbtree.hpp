@@ -280,7 +280,6 @@ namespace ft
             {
                 --_node_cnt;
                 _delete_node(x);
-
                 _TNULL->_parent = _root;
             }
 			// deleteNode
