@@ -303,10 +303,6 @@ namespace ft
                 size_type n = 0;
                 for (InputIterator it = first; it != last; ++it)
                     ++n;
-                // std::cout << n << std::endl;
-                // this->reserve(n);
-                // while (this->_start != this->_end)
-                //     _alloc.destroy(--this->_end);
                 this->clear();
                 if (this->capacity() < n)
                 {
@@ -319,22 +315,9 @@ namespace ft
                 for(size_type k = n; k != 0; k--)
                 {
                     _alloc.construct(this->_end++,*first++);
-                    // std::cout << "n : " << n << std::endl;
                 }
                 _size = n;
                 _capacity = n;
-
-                // this->reserve(n);
-                // for (size_type i = 0; i < n; ++i)
-                // {
-                //     if (i < _size)
-                //     {
-                //         _alloc.destroy(_start + i);
-                //     }
-                //     _alloc.construct(_start + i, *first++);
-                // }
-                // _size = n;
-                // _end = _start + n;
 		    }
                     //fill (2)	
             void assign (size_type n, const value_type& val)
@@ -436,13 +419,13 @@ namespace ft
 				size_type i = 0;
 				iterator temp;
 				temp = first;
-				// for (iterator it = first; it != last; ++it)
+				
 				while(temp != last)
 				{
 					_alloc.destroy(&(*temp));
 					temp++;
 				}
-				// for (iterator it = last + 1; it != this->end(); ++it)
+				
 				temp = last;
 				while(temp != this->end())
 				{

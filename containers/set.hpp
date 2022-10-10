@@ -89,12 +89,10 @@ namespace ft
 			{   
                 (void)comp;
 			    (void)alloc;
-                // std::cout << "TEST Con " << std::endl;
 			    for (InputIt it = first; it != last; ++it)
 			    {
 				    this->insert(*it);
 		    	}
-                // this->insert(first,last);
 			}
 				// Copy constructor
 			set(const set& x)
@@ -131,12 +129,10 @@ namespace ft
                 // end()
             iterator end()
 			{
-				// return iterator((this->_tree.getTNULL()));
                 return _tree.end();
 			}
 			const_iterator end() const
 			{
-				// return const_iterator(this->_tree.getTNULL());
                 return _tree.end();
 			}
                 // rbegin()
@@ -174,8 +170,6 @@ namespace ft
                 // max_size
             size_type max_size() const
             {
-                // node_type test_node(NULL, NULL, NULL, value_type(), BLACK);
-                // return sizeof(test_node);
                 return _tree.max_size();
             }
           
@@ -184,10 +178,7 @@ namespace ft
                     //single element (1)	
             ft::pair<iterator,bool> insert(const value_type& val)
             {
-                // std::cout << "insert type #1" << std::endl;
                 node_ptr temp = _tree._find_key(val);
-                // std::cout << "TEST : " << _tree._rb_insert(val)->_data.first << std::endl;
-                // std::cout << " TEST val: " << val.first << val.second << std::endl;
                 if (temp)
                     return ft::make_pair(iterator(temp), false);
                 else
@@ -213,24 +204,12 @@ namespace ft
                     // (1)	
             void erase (iterator position)
             {
-                // std::cout << " erase #1 find key TEST : " << position._node->_data.second << std::endl;
                 _tree._rb_delete(const_cast<node_ptr>(position.base()));
             }
-            // size_type erase(const key_type &k)
-            // {
-            //     node_ptr tmp = _bst.searchKey(k);
-            //     if (tmp)
-            //     {
-            //         _bst.rbDelete(tmp);
-            //         return 1;
-            //     }
-            //     return 0;
-            // }	
                     // (2)
             size_type erase (const key_type& k)
             {
                 node_ptr pos = this->_tree._find_key(k);
-                // std::cout << " erase find key TEST : " << pos->_data.first << std::endl;
                 if (pos)
                 {
                     _tree._rb_delete(const_cast<node_ptr>(pos));
@@ -241,18 +220,13 @@ namespace ft
                     // (3)	
             void erase (iterator first, iterator last)
             {
-                // iterator it = first++;
+                iterator it = first++;
 
-                for(iterator it = first++; it != last; first++)
+                while(it != last)
                 {
-                    // std::cout << " erase #find key it TEST : " << it._node->_data.second << std::endl;
-                    // std::cout << " erase #find key first TEST : " << first._node->_data.second << std::endl;
-
                     this->_tree._rb_delete(const_cast<node_ptr>(it._node));
                     it = first;
-                    // _tree._rb_delete(first._node);
-                    // first++;
-                    // it = first;
+                    first++;
                 }
             }
                 // swap

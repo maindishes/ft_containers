@@ -200,10 +200,10 @@ namespace ft
                 node_ptr temp = _root;
                 if (_root->_color == RED)
                     return NULL;
-                // std::cout << "TEST PASS COLOR " << _equal(key, KeyOfValue()(temp->_data)) << std::endl;
+                
                 while (temp != _TNULL && !_equal(key, KeyOfValue()(temp->_data)))
                 {
-                    // std::cout << "TEST pass while : " << std::endl;
+                    
                     if (_comp(key, KeyOfValue()(temp->_data)))
 						temp = temp->_left;
 					else
@@ -250,7 +250,6 @@ namespace ft
 
                 while (x != _TNULL)
                 {
-                    // node_ptr z = _getnode(node_type(NULL, _TNULL,_TNULL, data,RED));
                     y = x;
                     // data < x->data
                     if (_comp( KeyOfValue()(z->_data), KeyOfValue()(x->_data)))
@@ -274,15 +273,13 @@ namespace ft
                 if (z->_parent== _root)
                     return z;
                 _insert_fix(z);
-                return z; // 이부분 정확히 모름
+                return z; 
             }
             // delete node in rbtree
             void _rb_delete(const node_ptr &x)
             {
                 --_node_cnt;
                 _delete_node(x);
-                if (_root == _TNULL)
-                    _root = _getnode(node_type(NULL, _TNULL, _TNULL, value_type(), RED));
                 _TNULL->_parent = _root;
             }
 			// deleteNode
