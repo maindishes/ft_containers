@@ -14,8 +14,9 @@ include_path="../containers"
 srcs="srcs"
 
 CC="c++"
-CFLAGS="-Wall -Wextra -Werror -std=c++98"
-# CFLAGS+=" -fsanitize=address -g3"
+# CFLAGS="-Wall -Wextra -Werror -std=c++98"
+CFLAGS="-Wall -Werror -Wextra -std=c++98 -pedantic -fsanitize=address"
+
 
 ft_compile_output="/dev/null"
 std_compile_output="/dev/null"
