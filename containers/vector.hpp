@@ -5,7 +5,7 @@
 #include "reverse_iterator.hpp"
 #include "type_trait.hpp"
 #include "algorithm.hpp"
-// #include "iterator_base.hpp"
+#include "iterator_base.hpp"
 
 #include <cstddef>   // std::ptrdiff_t
 #include <memory>    // std::allocator
@@ -52,9 +52,9 @@ namespace ft
         //Member variables
         protected:
             allocator_type  _alloc;
-            pointer         _end_capacity;
+            // pointer         _end_capacity;
             pointer         _start;
-            pointer         _end;
+            // pointer         _end;
 
             size_type       _size;    // current size
             size_type       _capacity;// allocated size
@@ -63,7 +63,7 @@ namespace ft
         public:
             //empty container constructor (default constructor)
             explicit vector (const allocator_type& alloc = allocator_type())
-            : _alloc(alloc), _end_capacity(0),_start(0), _end(0), _size(0),_capacity(0)
+            : _alloc(alloc),_start(NULL), _size(0),_capacity(0)
             {}
             
             //fill constructor	
@@ -71,11 +71,11 @@ namespace ft
             : _alloc(alloc), _size(n), _capacity(n)
             {
                 this->_start = _alloc.allocate(n);
-                this->_end = this->_start;
-                this->_end_capacity = this->_start + n;
+                // this->_end = this->_start;
+                // this->_end_capacity = this->_start + n;
                 for (size_type i = 0; i < n; ++i)
                 {
-                    _alloc.construct(this->_end++, val);                
+                    _alloc.construct(this->_start + i, val);                
                 }
             }
 
@@ -85,44 +85,37 @@ namespace ft
              const allocator_type& alloc = allocator_type())
             : _alloc(alloc)
             {
-                // std::cout << "In----------" << std::endl;
                 _capacity = 0;
-                for (InputIterator it = first; it != last; it++)
+                for (InputIterator it = first; it != last; ++it)
                     _capacity++;
                 _start = _alloc.allocate(_capacity);
-                _end = _start + _capacity;
+                // _end = _start + _capacity;
                 // this->_end_capacity = this->_start + n;
-                for (_size = 0; _size < _capacity; _size++)
+                for (_size = 0; _size < _capacity; ++_size)
                     _alloc.construct(_start + _size, *first++);
-                // std::cout << "OUT--------------" << std::endl; 
             }
             
             // copy constructor 
             vector (const vector& x)
             : _alloc(x._alloc),_size(x._size), _capacity(x._capacity)
             {
-                size_type n = x.size();
+                // size_type n = x.size();
                 this->_start = this->_alloc.allocate(_capacity);
-                this->_end = _start;
-                this->_end_capacity = _start + n;
-                // pointer x_start = x._start;
-                // while(n--)
-                // {
-                //     _alloc.construct(_end++, *x_start++);
-                // }
                 for (size_type i = 0; i < _size; ++i)
                 {
                     _alloc.construct(_start + i, x[i]);
                 }
-                _end = _start  + n;
+                // _end = _start  + n;
             }
 
             //destructor
             virtual ~vector()
             {
                 this->clear();
-                this->_alloc.deallocate(this->_start, size_type(this->_end_capacity - this->_start));
-                // std::cout << "Finish" << std::endl;
+                // this->_alloc.deallocate(this->_start, size_type(this->_end_capacity - this->_start));
+                // for (size_type i = 0; i < _size; ++i)
+                //     _alloc.destroy(_start + i);
+                _alloc.deallocate(_start, _capacity);
             }
 
             // operator=
@@ -130,8 +123,12 @@ namespace ft
             {
                 if (this == &x)
                     return (*this);
-                while(this->_start != this->_end)
-                    this->_alloc.destroy(--this->_end);
+                // while(this->_start != this->_end)
+                //     this->_alloc.destroy(--this->_end);
+                for (size_type i = 0; i < _size; ++i)
+				{
+					_alloc.destroy(_start + i);
+				}
                 this->_alloc.deallocate(this->_start, _capacity);
                 _capacity = x._capacity;
                 _start = _alloc.allocate(_capacity);
@@ -202,20 +199,20 @@ namespace ft
             {
                 //erase, insert
                 // end_capacity update need
-                if (n < this->_size)
+                if (n <= this->_size)
                 {
-                    for(size_type i = n; i < _size; i++)
+                    for(size_type i = n; i < _size; ++i)
                         _alloc.destroy(this->_start + i);
                 }
-                else if (n >= this->_size)
+                else
                 {
                     this->reserve(n);
-                    for (size_type i = _size; i < n; i++)
+                    for (size_type i = _size; i < n; ++i)
                         _alloc.construct(_start + i, val);
                 }
                 _size = n;
-                _end_capacity = _start+n;
-                _end = _start + n;
+                // _end_capacity = _start+n;
+                // _end = _start + n;
             }
                 // capacity
             size_type capacity() const
@@ -236,7 +233,7 @@ namespace ft
                 // {
                 //     throw std::length_error("ft_vector"); 
                 // }
-                if (n > this->capacity())
+                if (n > this->_capacity)
                 {
                     pointer tmp = _start;
                     if (n < _capacity * 2)
@@ -293,13 +290,14 @@ namespace ft
             const_reference back() const
             {
                 return (*(end() - 1)); 
+                // return _start[_size-1];
             }
             // Modifier
                 //assign
                     //range (1)	
             template <class InputIterator>
             void assign (typename ft::enable_if<!ft::is_integral<InputIterator>::value , InputIterator>::type first, InputIterator last)
-            {
+            {     
                 size_type n = 0;
                 for (InputIterator it = first; it != last; ++it)
                     ++n;
@@ -308,13 +306,13 @@ namespace ft
                 {
                     _alloc.deallocate(_start, capacity());
                     _start = _alloc.allocate(n);
-                    _end = _start;
-                    _end_capacity = _start + n;
+                    // _end = _start;
+                    // _end_capacity = _start + n;
                 }
     
-                for(size_type k = n; k != 0; k--)
+                for(size_type k = 0; k < n; k++)
                 {
-                    _alloc.construct(this->_end++,*first++);
+                    _alloc.construct(this->_start + k,*first++);
                 }
                 _size = n;
                 _capacity = n;
@@ -323,21 +321,17 @@ namespace ft
             void assign (size_type n, const value_type& val)
             {
                 //clear
-                // this->reserve(n);
-                // while (this->_start != this->_end)
-                //     _alloc.destroy(--this->_end);
                 this->clear();
                 if (this->_capacity < n)
                 {
                     _alloc.deallocate(_start, _capacity);
                     _start = _alloc.allocate(n);
-                    _end = _start;
-                    _end_capacity = _start + n;
+                    // _end = _start;
+                    // _end_capacity = _start + n;
                 }
-                for(size_type k = n; k != 0; k--)
+                for(size_type k = 0; k < n; k++)
                 {
-                    _alloc.construct(this->_end++, val);
-                    // std::cout << "n : " << n << std::endl;
+                    _alloc.construct(this->_start+k, val);
                 }
                 _size = n;
                 _capacity = n;
@@ -348,20 +342,21 @@ namespace ft
             {
                 // 꽉 찼으면 resize(a+1);
                 // 아니면 construct 로 데이터 넣기
-                if (_size == _capacity)
-                    resize(_size + 1, val);
+                if (_size + 1 > _capacity)
+                    this->resize(_size + 1, val);
                 else
                 {
                     _alloc.construct(_start + _size, val);
-                    _size++;
+                    ++_size;
                 }
             }
 
                 // pop_back
             void pop_back()
             { 
-                _alloc.destroy(--_end);
-                _size--;
+                _alloc.destroy(_start + (_size-1));
+                --_size;
+                // --_end;
             }
                 // insert
                     //single element (1)	
@@ -383,7 +378,7 @@ namespace ft
 				for (size_type k = 0; k < n; ++k)
 					_alloc.construct(_start + i + k, val);
 				_size += n;
-				_end += n;
+				// _end += n;
             }
     
                     //range (3)	
@@ -405,7 +400,7 @@ namespace ft
 				for (size_type k = 0; k < n; ++k)
 					_alloc.construct(_start + i + k, *first++);
 				_size += n;
-				_end += n;
+				// _end += n;
 
             }
             //erase
@@ -434,7 +429,7 @@ namespace ft
 					++temp;
 				}
 				_size -= last - first;
-				_end = _end - (last - first);
+				// _end = _end - (last - first);
 				return first;
 			}
                 // swap
@@ -449,9 +444,10 @@ namespace ft
                 // }
 				if (this == &x)
 					return ;
+                ft::swap(this->_alloc,x._alloc);
 				ft::swap(this->_start, x._start);
-				ft::swap(this->_end, x._end);
-				ft::swap(this->_end_capacity, x._end_capacity);
+				// ft::swap(this->_end, x._end);
+				// ft::swap(this->_end_capacity, x._end_capacity);
 				ft::swap(this->_size,x._size);
 				ft::swap(this->_capacity,x._capacity);
             }
