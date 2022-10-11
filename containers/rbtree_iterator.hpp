@@ -75,15 +75,6 @@ namespace ft
                 return &(_node->_data);
             }
 
-            // bool operator==(const rbtree_iteraotr &x)
-            // {
-            //     return (_node == x._node);
-            // }
-            // bool operator!=(const rbtree_iterator &x)
-            // {
-            //     return (_node != x._node);
-            // }
-
             // operation++
 			node_ptr _increment(node_ptr x)
 			{
@@ -119,36 +110,7 @@ namespace ft
                 ++(*this);
                 return temp;
             }
-            // operation--
-            // void decrement() // 나보다 작은값중 제일 큰값 찾아 가는것.
-            // {
-            //     //   내가 end 일때  그냥 부모에서 제일 최대값 리턴
-            //     if (node_type::isTNULL(_node))
-            //     {
-            //         node_type::tree_maximum(_node->_parent);
-            //         return ;
-            //     }
-            //     // 왼쪽 자식이 존재 할땐 부모의 오른쪽 자식 리턴하면 이함수에서 찾는 값이 충족 된다.
-            //     if (!node_type::isTNULL(_node->_left))
-            //     {
-            //         node_type::tree_maximum(_node->_left);
-            //         return ;
-            //     }
-            //     else 
-            //     {
-            //         node_ptr p = _node->_parent;
-            //         while (p->_parent)
-            //         {
-            //             if (p->_parent->_right == _node) // ㄴㅐ가 오른쪽 자식일때는 ->  부모로 올로가는거 (한칸만 올라가면 작은값중 제일 큰값 되기 때문.) 
-            //             {
-            //                 p = p->_parent;
-            //                 return ;
-            //             }
-            //             p = p->_parent;
-            //         }
-            //         _node = p;
-            //     }
-            // }
+           
             node_ptr decrement(node_ptr _node)
             {
             // case header
@@ -274,8 +236,6 @@ namespace ft
             return &(_node->_data);
         }
 
-
-        
         // operation++
         node_ptr _increment(node_ptr x)
         {

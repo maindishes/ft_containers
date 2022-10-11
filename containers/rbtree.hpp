@@ -483,8 +483,6 @@ namespace ft
                 _root->_color = BLACK;
 		    }
     };
-    
-
 
 }
 #endif

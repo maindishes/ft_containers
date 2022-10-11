@@ -1,8 +1,7 @@
 #ifndef REVERSE_ITERATOR_HPP
 #define REVERSE_ITERATOR_HPP
 # include "iterator_base.hpp"
-// # include <vector>
-// std::vector<int> i;
+
 namespace ft
 {
 template <class Iterator> 
